@@ -1,10 +1,8 @@
-package fctreddit.clients;
+package fctreddit.clients.rest;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.logging.Logger;
-
-import fctreddit.clients.rest.RestUsersClient;
 
 public class GetUserClient {
 	

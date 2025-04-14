@@ -1,32 +1,31 @@
-package fctreddit.clients;
+package fctreddit.clients.rest;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.List;
 
 import org.glassfish.jersey.client.ClientConfig;
 
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+import fctreddit.api.User;
 import fctreddit.api.rest.RestUsers;
 
-public class GetUserAvatarClient {
-
+public class SearchUserClient {
 
 	public static void main(String[] args) throws IOException {
 		
-		if( args.length != 3) {
-			System.err.println( "Use: java " + CreateUserClient.class.getCanonicalName() + " url userId filenameToSaveData");
+		if( args.length != 2) {
+			System.err.println( "Use: java " + CreateUserClient.class.getCanonicalName() + " url query");
 			return;
 		}
 		
 		String serverUrl = args[0];
-		String userId = args[1];
-		String filenameToSave = args[2];
+		String query = args[1];
 		
 		System.out.println("Sending request to server.");
 		
@@ -35,15 +34,14 @@ public class GetUserAvatarClient {
 		
 		WebTarget target = client.target( serverUrl ).path( RestUsers.PATH );
 		
-		Response r = target.path( userId ).path( RestUsers.AVATAR ).request()
-				.accept(MediaType.APPLICATION_OCTET_STREAM)
+		Response r = target.path("/").queryParam( RestUsers.QUERY, query).request()
+				.accept(MediaType.APPLICATION_JSON)
 				.get();
 
 		if( r.getStatus() == Status.OK.getStatusCode() && r.hasEntity() ) {
-			System.out.println("Success:");
-			byte[] data = r.readEntity(byte[].class);
-			System.out.println( "Received user avatar with " + data.length + " bytes");
-			Files.write(Paths.get(filenameToSave), data);
+			List<User> users = r.readEntity(new GenericType<List<User>>() {});
+			System.out.println("Success: (" + users.size() + " users)");
+			users.stream().forEach( u -> System.out.println( u));
 		} else
 			System.out.println("Error, HTTP error status: " + r.getStatus() );
 

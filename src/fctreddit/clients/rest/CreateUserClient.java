@@ -1,4 +1,4 @@
-package fctreddit.clients;
+package fctreddit.clients.rest;
 
 import java.io.IOException;
 import java.net.URI;
@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 
 import fctreddit.api.java.Result;
 import fctreddit.api.User;
-import fctreddit.clients.rest.RestUsersClient;
 
 public class CreateUserClient {
 
