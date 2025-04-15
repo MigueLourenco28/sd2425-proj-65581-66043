@@ -56,6 +56,7 @@ Critérios de Avaliação
 - Image Service (Gestão de Imagens)
   - [ ]Armazenar e fornecer avatares e imagens associadas aos conteúdos;
   - [ ]Remover imagens quando o conteúdo for apagado.
+- [ ] Implementar Discovery.
 
 ### GRPC
 

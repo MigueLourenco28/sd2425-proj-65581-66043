@@ -17,13 +17,13 @@ import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
 import fctreddit.clients.java.UsersClient;
 import fctreddit.impl.grpc.util.DataModelAdaptor;
-import fctreddit.impl.server.grpc.generated_java.UsersGrpc;
-import fctreddit.impl.server.grpc.generated_java.UsersProtoBuf.CreateUserArgs;
-import fctreddit.impl.server.grpc.generated_java.UsersProtoBuf.CreateUserResult;
-import fctreddit.impl.server.grpc.generated_java.UsersProtoBuf.GetUserArgs;
-import fctreddit.impl.server.grpc.generated_java.UsersProtoBuf.GetUserResult;
-import fctreddit.impl.server.grpc.generated_java.UsersProtoBuf.GrpcUser;
-import fctreddit.impl.server.grpc.generated_java.UsersProtoBuf.SearchUserArgs;
+import fctreddit.impl.grpc.generated_java.UsersGrpc;
+import fctreddit.impl.grpc.generated_java.UsersProtoBuf.CreateUserArgs;
+import fctreddit.impl.grpc.generated_java.UsersProtoBuf.CreateUserResult;
+import fctreddit.impl.grpc.generated_java.UsersProtoBuf.GetUserArgs;
+import fctreddit.impl.grpc.generated_java.UsersProtoBuf.GetUserResult;
+import fctreddit.impl.grpc.generated_java.UsersProtoBuf.GrpcUser;
+import fctreddit.impl.grpc.generated_java.UsersProtoBuf.SearchUserArgs;
 
 public class GrpcUsersClient extends UsersClient {
 
