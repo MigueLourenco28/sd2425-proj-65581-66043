@@ -3,9 +3,11 @@ package fctreddit.impl.server.java;
 import java.util.List;
 import java.util.logging.Logger;
 
-import fctreddit.api.User;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response.Status;
+import fctreddit.api.User;
 import fctreddit.api.java.Users;
 import fctreddit.impl.server.persistence.Hibernate;
 
@@ -18,7 +20,7 @@ public class JavaUsers implements Users {
 	public JavaUsers() {
 		hibernate = Hibernate.getInstance();
 	}
-	
+
 	@Override
 	public Result<String> createUser(User user) {
 		Log.info("createUser : " + user);
@@ -27,7 +29,7 @@ public class JavaUsers implements Users {
 		if (user.getUserId() == null || user.getPassword() == null || user.getFullName() == null
 				|| user.getEmail() == null) {
 			Log.info("User object invalid.");
-			return Result.error(ErrorCode.BAD_REQUEST);
+			throw new WebApplicationException(Status.BAD_REQUEST);
 		}
 
 		try {
@@ -35,7 +37,7 @@ public class JavaUsers implements Users {
 		} catch (Exception e) {
 			e.printStackTrace(); //Most likely the exception is due to the user already existing...
 			Log.info("User already exists.");
-			return Result.error(ErrorCode.CONFLICT);
+			throw new WebApplicationException(Status.CONFLICT);
 		}
 		
 		return Result.ok(user.getUserId());
@@ -48,49 +50,96 @@ public class JavaUsers implements Users {
 		// Check if user is valid
 		if (userId == null || password == null) {
 			Log.info("UserId or password null.");
-			return Result.error(ErrorCode.BAD_REQUEST);
+			throw new WebApplicationException(Status.BAD_REQUEST);
 		}
-		
+
 		User user = null;
 		try {
 			user = hibernate.get(User.class, userId);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Result.error(ErrorCode.INTERNAL_ERROR);
+			throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 		}
 
 		// Check if user exists
 		if (user == null) {
 			Log.info("User does not exist.");
-			return Result.error(ErrorCode.NOT_FOUND);
+			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
 		// Check if the password is correct
 		if (!user.getPassword().equals(password)) {
-			Log.info("Password is incorrect");
-			return Result.error(ErrorCode.FORBIDDEN);
+			Log.info("Password is incorrect.");
+			throw new WebApplicationException(Status.FORBIDDEN);
 		}
-		
-		return Result.ok(user);
 
+		return Result.ok(user);
 	}
 
 	@Override
 	public Result<User> updateUser(String userId, String password, User user) {
-		// TODO Auto-generated method stub
-		return null;
+		Log.info("updateUser : user = " + userId + "; pwd = " + password + " ; userData = " + user);
+		//---------------Added code------------------//
+		if (userId == null || password == null || user == null) { // Check if userId, password or user is null
+            Log.info("Invalid input.");
+            throw new WebApplicationException(Status.BAD_REQUEST);
+        }
+
+        User existingUser = getUser(userId, password).value();
+        
+        if (user.getFullName() != null) {
+            existingUser.setFullName(user.getFullName());
+        }
+        if (user.getEmail() != null) {
+            existingUser.setEmail(user.getEmail());
+        }
+        if (user.getPassword() != null) {
+            existingUser.setPassword(user.getPassword());
+        }
+
+        try {
+            hibernate.update(existingUser); // Update the user in the database
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+        }
+
+        return Result.ok(existingUser);
+		//---------------End of added code------------------//
 	}
 
 	@Override
 	public Result<User> deleteUser(String userId, String password) {
-		// TODO Auto-generated method stub
-		return null;
+		Log.info("deleteUser : user = " + userId + "; pwd = " + password);
+		//---------------Added code------------------//
+		if (userId == null || password == null) {
+            Log.info("Invalid input.");
+            throw new WebApplicationException(Status.BAD_REQUEST);
+        }
+
+        User user = getUser(userId, password).value();
+
+        try {
+            hibernate.delete(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+        }
+
+        return Result.ok(user); // Return the deleted user object
+		//---------------End of added code------------------//
 	}
 
 	@Override
 	public Result<List<User>> searchUsers(String pattern) {
-		// TODO Auto-generated method stub
-		return null;
+		Log.info("searchUsers : pattern = " + pattern);
+		
+		try {
+			List<User> list = hibernate.jpql("SELECT u FROM User u WHERE u.userId LIKE '%" + pattern +"%'", User.class);
+			return Result.ok(list);
+		} catch (Exception e) {
+			return Result.error(ErrorCode.BAD_REQUEST);
+		}
 	}
 
 }

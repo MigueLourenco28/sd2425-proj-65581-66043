@@ -43,7 +43,10 @@ Critérios de Avaliação
   - [x] Obter informação de um utilizador
   - [x] Modificar um utilizador;
   - [x] Remover um utilizador;
-  - [ ] Pesquisar utilizadores.
+  - [x] Pesquisar utilizadores;
+  - [ ] Criar avatar do utilizador;
+  - [ ] Obter avatar do utilizador;
+  - [ ] Atualizar avatar do utilizador.
 - Content Service (Gestão de Conteúdos do Fórum)
   - [ ] Criar nova entrada/resposta;
   - [ ] Obter entradas de topo;
