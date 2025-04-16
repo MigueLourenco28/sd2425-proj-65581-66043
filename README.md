@@ -57,8 +57,8 @@ Critérios de Avaliação
   - [ ] Adicionar/remover up-vote e down-vote;
   - [ ] Operações opcionais: contagem de votos, entradas mais votadas, leitura bloqueante para novas respostas.
 - Image Service (Gestão de Imagens)
-  - [ ]Armazenar e fornecer avatares e imagens associadas aos conteúdos;
-  - [ ]Remover imagens quando o conteúdo for apagado.
+  - [ ] Armazenar e fornecer avatares e imagens associadas aos conteúdos;
+  - [ ] Remover imagens quando o conteúdo for apagado.
 - [ ] Implementar Discovery.
 
 ### GRPC

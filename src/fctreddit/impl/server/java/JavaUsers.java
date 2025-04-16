@@ -1,5 +1,6 @@
 package fctreddit.impl.server.java;
 
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -141,5 +142,63 @@ public class JavaUsers implements Users {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 	}
+
+	/**
+	@Override
+	public void associateAvatar(String userId, String password, byte[] avatar) {
+		Log.info("associate an avatar : user = " + userId + "; pwd = " + password + "; avatarSize = " + avatar.length);
+
+		if (avatar.length == 0) {
+			throw new WebApplicationException(Status.BAD_REQUEST);
+		}
+
+		User usr = this.getUser(userId, password);
+
+		Path pathToFile = Paths.get(AVATAR_DIRECTORY + File.separator + usr.getUserId() + ".png");
+
+		try {
+			Files.deleteIfExists(pathToFile); 
+			Files.write(pathToFile, avatar);
+		} catch (Exception e) {
+			throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Override
+	public void removeAvatar(String userId, String password) {
+		Log.info("delete an avatar : user = " + userId + "; pwd = " + password);
+		//---------------Added code------------------//
+		getUser(userId, password);
+        Path pathToFile = Paths.get(AVATAR_DIRECTORY, userId + ".png");
+		
+        try {
+            Files.deleteIfExists(pathToFile);
+        } catch (Exception e) {
+            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+        }
+		//---------------End of added code------------------//
+	}
+
+	@Override
+	public byte[] getAvatar(String userId) {
+		if (users.get(userId) == null) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+
+		Path pathToFile = Paths.get(AVATAR_DIRECTORY + File.separator + userId + ".png");
+
+		try {
+			if (Files.exists(pathToFile)) {
+				return Files.readAllBytes(pathToFile);
+			} else {
+				pathToFile = Paths.get(AVATAR_DIRECTORY + File.separator + DEFAULT_AVATAR_FILE);
+				return Files.readAllBytes(pathToFile);
+			}
+		} catch (Exception e) {
+			throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+	*/
 
 }

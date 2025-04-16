@@ -1,5 +1,6 @@
 package fctreddit.impl.server.rest.resources;
 
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -81,6 +82,25 @@ public class UsersResource implements RestUsers {
 		
 		return res.value();
 	}
+
+	/**
+	@Override
+	public void associateAvatar(String userId, String password, byte[] avatar) {
+		Log.info("associate an avatar : user = " + userId + "; pwd = " + password + "; avatarSize = " + avatar.length);
+
+	}
+
+	@Override
+	public void removeAvatar(String userId, String password) {
+		Log.info("delete an avatar : user = " + userId + "; pwd = " + password);
+		
+	}
+
+	@Override
+	public byte[] getAvatar(String userId) {
+
+	}
+	*/
 
 	protected static Status errorCodeToStatus( Result.ErrorCode error ) {
     	Status status =  switch( error) {

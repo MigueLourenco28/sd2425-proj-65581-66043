@@ -22,7 +22,6 @@ import fctreddit.impl.grpc.generated_java.UsersProtoBuf.UpdateUserArgs;
 import fctreddit.impl.grpc.generated_java.UsersProtoBuf.UpdateUserResult;
 import fctreddit.impl.server.java.JavaUsers;
 
-
 public class GrpcUsersServerStub implements UsersGrpc.AsyncService, BindableService{
 
 	Users impl = new JavaUsers();
