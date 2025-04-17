@@ -36,11 +36,25 @@ public class ImageResource implements RestImage {
 
     @Override
     public byte[] getImage(String userId, String imageId) {
-        return new byte[0];
+        Log.info("createImage by user :" + userId);
+
+        Result<byte[]> res = impl.getImage(userId, imageId);
+        if(!res.isOK()) {
+            throw new WebApplicationException(errorCodeToStatus(res.error()));
+        }
+        return res.value();
+
     }
 
     @Override
     public void deleteImage(String userId, String imageId, String password) {
+        Log.info("deleteImage by user :" + userId);
+
+        Result<Void> res = impl.deleteImage(userId,imageId,password);
+
+        if(!res.isOK()) {
+            throw new WebApplicationException(errorCodeToStatus(res.error()));
+        }
 
     }
 
