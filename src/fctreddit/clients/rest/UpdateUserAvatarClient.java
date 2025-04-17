@@ -1,6 +1,7 @@
 package fctreddit.clients.rest;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,21 +15,26 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+import fctreddit.Discovery;
 import fctreddit.api.rest.RestUsers;
 
 public class UpdateUserAvatarClient {
 
 	public static void main(String[] args) throws IOException {
 		
-		if( args.length != 4) {
+		if( args.length != 3) {
 			System.err.println( "Use: java " + CreateUserClient.class.getCanonicalName() + " url userId password filename");
 			return;
 		}
 		
-		String serverUrl = args[0];
-		String userId = args[1];
-		String password = args[2];
-		String filename = args[3];
+		Discovery discovery = new Discovery(Discovery.DISCOVERY_ADDR);
+		discovery.start();
+
+		URI[] uris = discovery.knownUrisOf("Users", 1);
+
+		String userId = args[0];
+		String password = args[1];
+		String filename = args[2];
 		
 		Path avatarFilePath = Paths.get(filename);
 		
@@ -49,7 +55,7 @@ public class UpdateUserAvatarClient {
 		ClientConfig config = new ClientConfig();
 		Client client = ClientBuilder.newClient(config);
 		
-		WebTarget target = client.target( serverUrl ).path( RestUsers.PATH );  
+		WebTarget target = client.target( uris[0].toString() ).path( RestUsers.PATH );  
 		
 		Response r = target.path( userId ).path( RestUsers.AVATAR )
 				.queryParam(RestUsers.PASSWORD, password).request()

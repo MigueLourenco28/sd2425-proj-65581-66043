@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.logging.Logger;
 
 import fctreddit.api.java.Result;
+import fctreddit.Discovery;
 import fctreddit.api.User;
 
 public class CreateUserClient {
@@ -13,20 +14,24 @@ public class CreateUserClient {
 	
 	public static void main(String[] args) throws IOException {
 		
-		if( args.length != 5) {
+		if( args.length != 4) {
 			System.err.println( "Use: java " + CreateUserClient.class.getCanonicalName() + " url userId fullName email password");
 			return;
 		}
 		
-		String serverUrl = args[0];
-		String userId = args[1];
-		String fullName = args[2];
-		String email = args[3];
-		String password = args[4];
+		Discovery discovery = new Discovery(Discovery.DISCOVERY_ADDR);
+		discovery.start();
+
+		URI[] uris = discovery.knownUrisOf("Users", 1);
+
+		String userId = args[0];
+		String fullName = args[1];
+		String email = args[2];
+		String password = args[3];
 		
 		User usr = new User( userId, fullName, email, password);
 		
-		RestUsersClient client = new RestUsersClient( URI.create( serverUrl ) );
+		RestUsersClient client = new RestUsersClient( URI.create( uris[0].toString() ) );
 		
 		Result<String> result = client.createUser( usr );
 		if( result.isOK()  )

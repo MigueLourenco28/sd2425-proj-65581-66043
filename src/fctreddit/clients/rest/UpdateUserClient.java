@@ -1,6 +1,7 @@
 package fctreddit.clients.rest;
 
 import java.io.IOException;
+import java.net.URI;
 
 import org.glassfish.jersey.client.ClientConfig;
 
@@ -11,6 +12,7 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+import fctreddit.Discovery;
 import fctreddit.api.User;
 import fctreddit.api.rest.RestUsers;
 
@@ -18,17 +20,21 @@ public class UpdateUserClient {
 
 	public static void main(String[] args) throws IOException {
 		
-		if( args.length != 6) {
+		if( args.length != 5) {
 			System.err.println( "Use: java " + CreateUserClient.class.getCanonicalName() + " url userId oldpwd fullName email password");
 			return;
 		}
 		
-		String serverUrl = args[0];
-		String userId = args[1];
-		String oldpwd = args[2];
-		String fullName = args[3];
-		String email = args[4];
-		String password = args[5];
+		Discovery discovery = new Discovery(Discovery.DISCOVERY_ADDR);
+		discovery.start();
+
+		URI[] uris = discovery.knownUrisOf("Users", 1);
+
+		String userId = args[0];
+		String oldpwd = args[1];
+		String fullName = args[2];
+		String email = args[3];
+		String password = args[4];
 		
 		User usr = new User( userId, fullName, email, password);
 		
@@ -38,7 +44,7 @@ public class UpdateUserClient {
 		ClientConfig config = new ClientConfig();
 		Client client = ClientBuilder.newClient(config);
 
-		WebTarget target = client.target(serverUrl).path(RestUsers.PATH).path(userId)
+		WebTarget target = client.target( uris[0].toString() ).path(RestUsers.PATH).path(userId)
 				.queryParam(RestUsers.PASSWORD, oldpwd);
 
 		Response r = target.request()
