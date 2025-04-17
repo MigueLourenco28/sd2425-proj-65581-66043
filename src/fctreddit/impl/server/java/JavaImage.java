@@ -34,7 +34,8 @@ public class JavaImage implements Image {
     @Override
     public Result<String> createImage(String userId, byte[] imageContents, String password) {
 
-        if (imageContents.length == 0 || password == null) {
+        if (imageContents.length == 0 ||
+            password == null || password.isEmpty()) {
             Log.info("Image or password null.");
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }

@@ -46,7 +46,7 @@ public class JavaUsers implements Users {
 		} catch (Exception e) {
 			e.printStackTrace(); //Most likely the exception is due to the user already existing...
 			Log.info("User already exists.");
-			throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+			throw new WebApplicationException(Status.CONFLICT);
 		}
 		
 		return Result.ok(user.getUserId());
