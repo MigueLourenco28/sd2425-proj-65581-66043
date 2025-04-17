@@ -59,7 +59,7 @@ public class JavaImage implements Image {
         String imageId = UUID.randomUUID().toString();
 
         try {
-            Path imagePath = Paths.get("images/" + imageId + ".jpg");
+            Path imagePath = Paths.get("media/images/" + imageId + ".jpg");
             Files.createDirectories(imagePath.getParent());
             Files.write(imagePath, imageContents);
         } catch (IOException e) {
