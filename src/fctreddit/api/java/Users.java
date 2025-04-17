@@ -66,40 +66,5 @@ public interface Users {
 	 */
 	Result<List<User>> searchUsers(String pattern);
 
-	/**
-	 * Associate an Avatar image to a user profile
-	 * 
-	 * @param userId the identifier of the user
-	 * @param avatar the bytes of the image in PNG format (in the body of the request)
-	 * @return 204 in the case of success. 404 if the user does not exists, 403 
-	 * if password incorrect, 400 if avatar has a size of zero
-	 */
-	//@PUT
-	//@Path("{" + USER_ID + "}/" + AVATAR)
-	//@Consumes(MediaType.APPLICATION_OCTET_STREAM)
-	//void associateAvatar(@PathParam(USER_ID) String userId, @QueryParam(PASSWORD) String password, byte[] avatar);
 
-	
-	/**
-	 * Deletes an Avatar image associated to the current user profile
-	 * 
-	 * @param userId the identifier of the user
-	 * @return 204 in the case of success. 404 if the user or avatar does not exists, 403 
-	 * if password incorrect
-	 */
-	//@DELETE
-	//@Path("{" + USER_ID + "}/" + AVATAR)
-	//void removeAvatar(@PathParam(USER_ID) String userId, @QueryParam(PASSWORD) String password);
-	
-	/**
-	 * Gets an Avatar image associated to the current user profile
-	 * 
-	 * @param userId the identifier of the user
-	 * @return 200 the case of success returning the bytes of the user image (if one is associated) 
-	 * or the default otherwise. 404 should be returned if the user does not exists
-	 */
-	//@GET
-	//@Path("{" + USER_ID + "}/" + AVATAR)
-	//@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	//byte[] getAvatar(@PathParam(USER_ID) String userId);
 }

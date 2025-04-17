@@ -5,7 +5,7 @@ import java.util.List;
 import fctreddit.api.User;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Users;
-import fctreddit.clients.java.Client;
+
 
 public abstract class UsersClient extends Client implements Users {
 	
