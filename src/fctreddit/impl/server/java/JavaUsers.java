@@ -90,12 +90,12 @@ public class JavaUsers implements Users {
 	public Result<User> updateUser(String userId, String password, User user) {
 		Log.info("updateUser : user = " + userId + "; pwd = " + password + " ; userData = " + user);
 		//---------------Added code------------------//
-		if (userId == null || password == null || user == null) { // Check if userId, password or user is null
+		if (userId == null || userId.isEmpty() ||
+			password == null || password.isEmpty() ||
+			user == null) { // Check if userId, password or user is null
             Log.info("Invalid input.");
             throw new WebApplicationException(Status.BAD_REQUEST);
         }
-
-
 
         User existingUser = getUser(userId, password).value();
 
@@ -135,7 +135,8 @@ public class JavaUsers implements Users {
 	public Result<User> deleteUser(String userId, String password) {
 		Log.info("deleteUser : user = " + userId + "; pwd = " + password);
 		//---------------Added code------------------//
-		if (userId == null || password == null) {
+		if (userId == null || userId.isEmpty() ||
+			password == null || password.isEmpty()) { // Check if userId or password is null
             Log.info("Invalid input.");
             throw new WebApplicationException(Status.BAD_REQUEST);
         }
