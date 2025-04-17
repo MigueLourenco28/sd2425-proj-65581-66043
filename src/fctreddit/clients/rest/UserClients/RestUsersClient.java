@@ -1,4 +1,4 @@
-package fctreddit.clients.rest;
+package fctreddit.clients.rest.UserClients;
 
 import java.net.URI;
 

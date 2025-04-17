@@ -6,8 +6,7 @@ import fctreddit.api.java.Image;
 import fctreddit.api.java.Result;
 
 import fctreddit.clients.java.UsersClient;
-
-import fctreddit.clients.rest.RestUsersClient;
+import fctreddit.clients.rest.UserClients.RestUsersClient;
 import fctreddit.impl.server.persistence.Hibernate;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;

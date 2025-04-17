@@ -1,6 +1,5 @@
-package fctreddit.clients.rest;
+package fctreddit.clients.rest.ImageClients;
 
-import fctreddit.api.User;
 import fctreddit.api.java.Result;
 import fctreddit.api.rest.RestUsers;
 import fctreddit.clients.java.ImageClient;

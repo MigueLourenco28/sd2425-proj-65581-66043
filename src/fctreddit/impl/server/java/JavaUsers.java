@@ -9,7 +9,7 @@ import fctreddit.Discovery;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
 import fctreddit.clients.java.ImageClient;
-import fctreddit.clients.rest.RestImageClient;
+import fctreddit.clients.rest.ImageClients.RestImageClient;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response.Status;
 import fctreddit.api.User;
