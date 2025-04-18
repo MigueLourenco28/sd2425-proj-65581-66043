@@ -159,7 +159,7 @@ public class JavaUsers implements Users {
 				URI[] uri = discovery.knownUrisOf("Image",1);
 				ImageClient imageClient = new RestImageClient(uri[0]);
 				String[] split = user.getAvatarUrl().split("/");
-				String[] split2 = split[6].split(".");
+				String[] split2 = split[7].split(".");
 				String imageId = split2[0];
 				imageClient.deleteImage(userId,imageId,password);
 			}

@@ -23,7 +23,7 @@ public class JavaImage implements Image {
 
     public static Discovery discovery;
 
-    private static Logger Log = Logger.getLogger(JavaUsers.class.getName());
+    private static Logger Log = Logger.getLogger(JavaImage.class.getName());
 
     public JavaImage() {
     }
@@ -55,7 +55,7 @@ public class JavaImage implements Image {
 
         String imageId = UUID.randomUUID().toString();
 
-        Path imagePath = Paths.get("images/" + user.getUserId() + "/" + imageId + ".jpg");
+        Path imagePath = Paths.get("fctreddit/images/" + user.getUserId() + "/" + imageId + ".jpg");
 
         try {
             Files.write(imagePath, imageContents);
