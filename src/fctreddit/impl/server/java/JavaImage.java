@@ -55,9 +55,10 @@ public class JavaImage implements Image {
 
         String imageId = UUID.randomUUID().toString();
 
-        Path imagePath = Paths.get("fctreddit/images/" + user.getUserId() + "/" + imageId + ".jpg");
+        Path imagePath = Paths.get("src/fctreddit/images/" + user.getUserId() + "/" + imageId + ".jpg");
 
         try {
+            Files.createDirectories(imagePath.getParent());
             Files.write(imagePath, imageContents);
         } catch (IOException e) {
             Log.severe("Error saving image: " + e.getMessage());
