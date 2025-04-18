@@ -23,7 +23,7 @@ public class JavaImage implements Image {
 
     public static Discovery discovery;
 
-    private static Logger Log = Logger.getLogger(JavaUsers.class.getName());
+    private static Logger Log = Logger.getLogger(JavaImage.class.getName());
 
     public JavaImage() {
     }
@@ -100,6 +100,7 @@ public class JavaImage implements Image {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
 
+
         Path imageDir = Paths.get("media/images/" + userId + "/" + imageId + ".jpg");
 
 
@@ -108,8 +109,8 @@ public class JavaImage implements Image {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
 
-        URI[] uri = discovery.knownUrisOf("Users", 1);
-        UsersClient client = new RestUsersClient(uri[0]);
+        URI[] uriUsers = discovery.knownUrisOf("Users", 1);
+        UsersClient client = new RestUsersClient(uriUsers[0]);
         User user = client.getUser(userId, password).value();
 
         if (user == null) {
