@@ -55,11 +55,6 @@ public class JavaImage implements Image {
 
         String imageId = UUID.randomUUID().toString();
 
-<<<<<<< HEAD
-=======
-        //TODO: save image as entity in the database
-
->>>>>>> 043557dd65e9b90499255f8a95cb857eb22fbf49
         Path imagePath = Paths.get("images/" + user.getUserId() + "/" + imageId + ".jpg");
 
         try {
