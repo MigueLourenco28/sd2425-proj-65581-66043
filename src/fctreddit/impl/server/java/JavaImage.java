@@ -7,7 +7,6 @@ import fctreddit.api.java.Result;
 
 import fctreddit.clients.java.UsersClient;
 import fctreddit.clients.rest.UserClients.RestUsersClient;
-import fctreddit.impl.server.persistence.Hibernate;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
@@ -55,9 +54,11 @@ public class JavaImage implements Image {
 
         String imageId = UUID.randomUUID().toString();
 
-        Path imagePath = Paths.get("images/" + user.getUserId() + "/" + imageId + ".jpg");
+        Path imagePath = Paths.get("src/fctreddit/images/" + user.getUserId() + "/" + imageId + ".jpg");
 
         try {
+            if(imagePath.getParent() == null)
+                Files.createDirectory(imagePath.getParent());
             Files.write(imagePath, imageContents);
         } catch (IOException e) {
             Log.severe("Error saving image: " + e.getMessage());
@@ -73,7 +74,7 @@ public class JavaImage implements Image {
     @Override
     public Result<byte[]> getImage(String userId, String imageId) {
 
-        Path imageDir = Paths.get("media/images/" + userId + "/" + imageId + ".jpg");
+        Path imageDir = Paths.get("images/" + userId + "/" + imageId + ".jpg");
 
 
         if (Files.exists(imageDir)) {
@@ -100,8 +101,7 @@ public class JavaImage implements Image {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
 
-
-        Path imageDir = Paths.get("media/images/" + userId + "/" + imageId + ".jpg");
+        Path imageDir = Paths.get("images/" + userId + "/" + imageId + ".jpg");
 
 
         if (!Files.exists(imageDir)) {
@@ -109,8 +109,8 @@ public class JavaImage implements Image {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
 
-        URI[] uriUsers = discovery.knownUrisOf("Users", 1);
-        UsersClient client = new RestUsersClient(uriUsers[0]);
+        URI[] uri = discovery.knownUrisOf("Users", 1);
+        UsersClient client = new RestUsersClient(uri[0]);
         User user = client.getUser(userId, password).value();
 
         if (user == null) {
