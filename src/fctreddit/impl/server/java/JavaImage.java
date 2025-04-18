@@ -54,19 +54,17 @@ public class JavaImage implements Image {
 
         String imageId = UUID.randomUUID().toString();
 
-        Path imagePath = Paths.get("src/fctreddit/images/" + user.getUserId() + "/" + imageId + ".jpg");
+        Path imagePath = Paths.get("images", user.getUserId(), imageId + ".jpg");
 
         try {
-            if(imagePath.getParent() == null)
-                Files.createDirectory(imagePath.getParent());
+            Files.createDirectories(imagePath.getParent());
             Files.write(imagePath, imageContents);
         } catch (IOException e) {
             Log.severe("Error saving image: " + e.getMessage());
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
 
-        String imageUrl = uri[0] + "/" + imagePath;
-
+        String imageUrl = uri[0].toString() +  "/" + imagePath.toString();
 
         return Result.ok(imageUrl);
     }
@@ -74,7 +72,7 @@ public class JavaImage implements Image {
     @Override
     public Result<byte[]> getImage(String userId, String imageId) {
 
-        Path imageDir = Paths.get("images/" + userId + "/" + imageId + ".jpg");
+        Path imageDir = Paths.get("fctreddit/images/" + userId + "/" + imageId + ".jpg");
 
 
         if (Files.exists(imageDir)) {
@@ -86,8 +84,8 @@ public class JavaImage implements Image {
                 throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
             }
         } else {
-            Log.info("Doens't exist the image with the id:" + imageId + "and userId " +
-                    userId + ".");
+            Log.info("The image with the id " + imageId + "and userId " +
+                    userId + " does not exist.");
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
 
@@ -101,7 +99,7 @@ public class JavaImage implements Image {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
 
-        Path imageDir = Paths.get("images/" + userId + "/" + imageId + ".jpg");
+        Path imageDir = Paths.get("fctreddit/images/" + userId + "/" + imageId + ".jpg");
 
 
         if (!Files.exists(imageDir)) {
