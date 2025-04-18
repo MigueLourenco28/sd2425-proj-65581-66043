@@ -25,10 +25,7 @@ public class JavaImage implements Image {
 
     private static Logger Log = Logger.getLogger(JavaUsers.class.getName());
 
-    private Hibernate hibernate;
-
     public JavaImage() {
-        hibernate = Hibernate.getInstance();
     }
 
     @Override
@@ -58,12 +55,9 @@ public class JavaImage implements Image {
 
         String imageId = UUID.randomUUID().toString();
 
-        //TODO: save image as entity in the database
-
-        Path imagePath = Paths.get("media/images/" + user.getUserId() + "/" + imageId + ".jpg");
+        Path imagePath = Paths.get("images/" + user.getUserId() + "/" + imageId + ".jpg");
 
         try {
-            Files.createDirectories(imagePath.getParent());
             Files.write(imagePath, imageContents);
         } catch (IOException e) {
             Log.severe("Error saving image: " + e.getMessage());
