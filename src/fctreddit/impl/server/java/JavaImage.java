@@ -60,7 +60,7 @@ public class JavaImage implements Image {
 
         //TODO: save image as entity in the database
 
-        Path imagePath = Paths.get("media/images/" + user.getUserId() + "/" + imageId + ".jpg");
+        Path imagePath = Paths.get("images/" + user.getUserId() + "/" + imageId + ".jpg");
 
         try {
             Files.createDirectories(imagePath.getParent());

@@ -157,10 +157,11 @@ public class JavaUsers implements Users {
         try {
 			if(user.getAvatarUrl() != null) {
 				URI[] uri = discovery.knownUrisOf("Image",1);
-				ImageClient client = new RestImageClient(uri[0]);
+				ImageClient imageClient = new RestImageClient(uri[0]);
 				String[] split = user.getAvatarUrl().split("/");
-				String imageId = split[6];
-				client.deleteImage(userId,imageId,password);
+				String[] split2 = split[6].split(".");
+				String imageId = split2[0];
+				imageClient.deleteImage(userId,imageId,password);
 			}
             hibernate.delete(user);
         } catch (Exception e) {
