@@ -56,6 +56,7 @@ public class ImageResource implements RestImage {
         }
 
         //TODO: return NO_CONTENT in the case of success
+        //return Response.status(Response.Status.NO_CONTENT) ?;
 
     }
 

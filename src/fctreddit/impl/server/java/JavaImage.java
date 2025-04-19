@@ -9,6 +9,7 @@ import fctreddit.clients.java.UsersClient;
 import fctreddit.clients.rest.UserClients.RestUsersClient;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 import java.io.IOException;
 import java.net.URI;
@@ -52,7 +53,7 @@ public class JavaImage implements Image {
             return Result.error(ErrorCode.FORBIDDEN);
         }
 
-        String imageId = UUID.randomUUID().toString();
+        String imageId = UUID.randomUUID().toString(); 
 
         Path imagePath = Paths.get("fctreddit", "images", user.getUserId(), imageId + ".jpg");
 
