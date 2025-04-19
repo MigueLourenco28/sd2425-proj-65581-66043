@@ -19,7 +19,7 @@ public class DeleteUserClient {
 	public static void main(String[] args) throws IOException {
 		
 		if( args.length != 2) {
-			System.err.println( "Use: java " + CreateUserClient.class.getCanonicalName() + " url userId password");
+			System.err.println( "Use: java " + CreateUserClient.class.getCanonicalName() + " userId password");
 			return;
 		}
 		

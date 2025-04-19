@@ -4,7 +4,7 @@ import fctreddit.Discovery;
 import fctreddit.api.User;
 import fctreddit.api.java.Image;
 import fctreddit.api.java.Result;
-
+import fctreddit.api.java.Result.ErrorCode;
 import fctreddit.clients.java.UsersClient;
 import fctreddit.clients.rest.UserClients.RestUsersClient;
 import jakarta.ws.rs.WebApplicationException;
@@ -33,7 +33,7 @@ public class JavaImage implements Image {
         if (imageContents.length == 0 ||
                 password == null || password.isEmpty()) {
             Log.info("Image or password null.");
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+            return Result.error(ErrorCode.BAD_REQUEST);
         }
 
         URI[] uri = discovery.knownUrisOf("Users", 1);
@@ -42,29 +42,29 @@ public class JavaImage implements Image {
 
         if (user == null) {
             Log.info("User does not exist.");
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            return Result.error(ErrorCode.NOT_FOUND);
         }
 
         String pwd = user.getPassword();
 
         if (!pwd.equals(password)) {
             Log.info("Password is incorrect.");
-            throw new WebApplicationException(Response.Status.FORBIDDEN);
+            return Result.error(ErrorCode.FORBIDDEN);
         }
 
         String imageId = UUID.randomUUID().toString();
 
-        Path imagePath = Paths.get("images", user.getUserId(), imageId + ".jpg");
+        Path imagePath = Paths.get("fctreddit", "images", user.getUserId(), imageId + ".jpg");
 
         try {
             Files.createDirectories(imagePath.getParent());
             Files.write(imagePath, imageContents);
         } catch (IOException e) {
             Log.severe("Error saving image: " + e.getMessage());
-            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+            return Result.error(ErrorCode.INTERNAL_ERROR);
         }
 
-        String imageUrl = uri[0].toString() +  "/" + imagePath;
+        String imageUrl = uri[0].toString() +  "/" + imagePath.toString();
 
         return Result.ok(imageUrl);
     }
@@ -81,12 +81,12 @@ public class JavaImage implements Image {
                 return Result.ok(imageData);
             } catch (IOException e) {
                 Log.severe("Error getting the  image: " + e.getMessage());
-                throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                return Result.error(ErrorCode.INTERNAL_ERROR);
             }
         } else {
             Log.info("The image with the id " + imageId + "and userId " +
                     userId + " does not exist.");
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            return Result.error(ErrorCode.NOT_FOUND);
         }
 
     }
@@ -96,7 +96,7 @@ public class JavaImage implements Image {
 
         if (password == null || password.isEmpty()) {
             Log.info("Password null.");
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+            return Result.error(ErrorCode.BAD_REQUEST);
         }
 
         Path imageDir = Paths.get("fctreddit/images/" + userId + "/" + imageId + ".jpg");
@@ -104,7 +104,7 @@ public class JavaImage implements Image {
 
         if (!Files.exists(imageDir)) {
             Log.info("Image doesn't exist: " + imageId);
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            return Result.error(ErrorCode.NOT_FOUND);
         }
 
         URI[] uri = discovery.knownUrisOf("Users", 1);
@@ -113,14 +113,14 @@ public class JavaImage implements Image {
 
         if (user == null) {
             Log.info("User does not exist.");
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            return Result.error(ErrorCode.NOT_FOUND);
         }
 
         String pwd = user.getPassword();
 
         if (!pwd.equals(password)) {
             Log.info("Password is incorrect.");
-            throw new WebApplicationException(Response.Status.FORBIDDEN);
+            return Result.error(ErrorCode.FORBIDDEN);
         }
 
         try {
@@ -128,7 +128,7 @@ public class JavaImage implements Image {
             Log.info("Image deleted successfully: " + imageId);
         } catch (IOException e) {
             Log.severe("Error deleting image: " + e.getMessage());
-            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+            return Result.error(ErrorCode.INTERNAL_ERROR);
         }
 
 

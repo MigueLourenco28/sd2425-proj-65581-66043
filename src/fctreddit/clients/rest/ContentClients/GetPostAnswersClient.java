@@ -6,15 +6,15 @@ import java.util.logging.Logger;
 
 import fctreddit.Discovery;
 
-public class RemoveUpVotePostClient {
+public class GetPostAnswersClient {
 	
-	private static Logger Log = Logger.getLogger(RemoveUpVotePostClient.class.getName());
+	private static Logger Log = Logger.getLogger(GetPostAnswersClient.class.getName());
 
 
 	public static void main(String[] args) throws IOException {
 		
-		if( args.length != 3) {
-			System.err.println( "Use: java " + RemoveUpVotePostClient.class.getCanonicalName() + " postId userId userPassword");
+		if( args.length != 2) {
+			System.err.println( "Use: java " + GetPostAnswersClient.class.getCanonicalName() + " postId maxTimeout");
 			return;
 		}
 		
@@ -24,16 +24,16 @@ public class RemoveUpVotePostClient {
 		URI[] uris = discovery.knownUrisOf("Content", 1);
 
 		String postId = args[0];
-        String userId = args[1];
-        String userPassword = args[2];
+		int maxTimeout = Integer.parseInt(args[1]);
 		
 		var client = new RestContentClient( URI.create( uris[0].toString() ) );
 			
-		var result = client.removeUpVotePost(postId, userId, userPassword);
+		var result = client.getPostAnswers(postId, maxTimeout);
 		if( result.isOK()  )
-			Log.info("Removed UpVote:" + result.value() );
+			Log.info("Get Post Answers:" + result.value() );
+			//TODO: print the list 
 		else
-			Log.info("Remove UpVote failed with error: " + result.error());
+			Log.info("Get UpVotes failed with error: " + result.error());
 		
 	}
 	

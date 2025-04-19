@@ -6,15 +6,15 @@ import java.util.logging.Logger;
 
 import fctreddit.Discovery;
 
-public class GetUpVotesClient {
+public class GetPostsClient {
 	
-	private static Logger Log = Logger.getLogger(GetUpVotesClient.class.getName());
+	private static Logger Log = Logger.getLogger(GetPostsClient.class.getName());
 
 
 	public static void main(String[] args) throws IOException {
 		
-		if( args.length != 1) {
-			System.err.println( "Use: java " + GetUpVotesClient.class.getCanonicalName() + " postId");
+		if( args.length != 2) {
+			System.err.println( "Use: java " + GetPostsClient.class.getCanonicalName() + " timestamp sortOrder");
 			return;
 		}
 		
@@ -23,15 +23,16 @@ public class GetUpVotesClient {
 
 		URI[] uris = discovery.knownUrisOf("Content", 1);
 
-		String postId = args[0];
+		String sortOrder = args[0];
+        String timestamp = args[1];
 		
 		var client = new RestContentClient( URI.create( uris[0].toString() ) );
 			
-		var result = client.getupVotes(postId);
+		var result = client.getPosts( Long.parseLong(timestamp) , sortOrder);
 		if( result.isOK()  )
-			Log.info("Get UpVotes:" + result.value() );
+			Log.info("Get Post :" + result.value() );
 		else
-			Log.info("Get UpVotes failed with error: " + result.error());
+			Log.info("Get Post failed with error: " + result.error());
 		
 	}
 	
