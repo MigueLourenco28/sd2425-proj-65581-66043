@@ -22,7 +22,6 @@ public class ImageResource implements RestImage {
         impl = new JavaImage();
     }
 
-
     @Override
     public String createImage(String userId, byte[] imageContents, String password) {
         Log.info("createImage by user :" + userId);
