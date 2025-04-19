@@ -1,5 +1,6 @@
 package fctreddit.impl.server.java;
 
+import java.awt.image.DirectColorModel;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
@@ -42,6 +43,7 @@ public class JavaUsers implements Users {
 		}
 
 		try {
+
 			hibernate.persist(user);
 		} catch (Exception e) {
 			e.printStackTrace(); //Most likely the exception is due to the user already existing...
