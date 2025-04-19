@@ -88,11 +88,18 @@ public class UsersResource implements RestUsers {
 	public void associateAvatar(String userId, String password, byte[] avatar) {
 		Log.info("associate an avatar : user = " + userId + "; pwd = " + password + "; avatarSize = " + avatar.length);
 
+		Result<void> res = impl.associateAvatar(userId, password, avatar);
+		if(!res.isOK()) {
+			throw new WebApplicationException(errorCodeToStatus(res.error()));
+		}
+		return res.value();
+		
 	}
 
 	@Override
 	public void removeAvatar(String userId, String password) {
 		Log.info("delete an avatar : user = " + userId + "; pwd = " + password);
+		
 		
 	}
 

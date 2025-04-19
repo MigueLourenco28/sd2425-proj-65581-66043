@@ -55,6 +55,8 @@ public class ImageResource implements RestImage {
             throw new WebApplicationException(errorCodeToStatus(res.error()));
         }
 
+        //TODO: return NO_CONTENT in the case of success
+
     }
 
     protected static Response.Status errorCodeToStatus(Result.ErrorCode error ) {
