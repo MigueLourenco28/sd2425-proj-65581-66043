@@ -41,7 +41,9 @@ public class JavaContent implements Content {
         try {
             String postId = UUID.randomUUID().toString();
             post.setPostId(postId);
-            post.setCreationTimestamp(System.currentTimeMillis());
+            if(post.getParentUrl() != null){
+              //fazer aqui a atualizaçao do numReplies;
+            }
             hibernate.persist(post);
             return Result.ok(postId);
 
@@ -54,11 +56,36 @@ public class JavaContent implements Content {
     @Override
     public Result<List<String>> getPosts(long timestamp, String sortOrder) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPosts'");
+
+        String query = "SELECT u.postId FROM Post u WHERE u.parentUrl IS NULL";
+
+        if(timestamp > 0){
+            query += " AND u.creationTimestamp >= '%" + timestamp +"%'";
+        }
+
+        if(sortOrder != null){
+            if(sortOrder.equals("MOST_UP_VOTES")){
+                query += " ORDER BY u.upVote DESC, u.postId ASC";
+            }else if(sortOrder.equals("MOST_REPLIES")){
+                query += " ORDER BY u.numReplies DESC, u.postId ASC";
+            }
+        }
+        try {
+            List<String> posts = hibernate.jpql(query, String.class);
+            return Result.ok(posts);
+        }catch (Exception e) {
+            return Result.error(Result.ErrorCode.BAD_REQUEST);
+        }
     }
 
     @Override
     public Result<Post> getPost(String postId) {
+        Log.info("getPost : " + postId);
+
+        if(postId == null){
+            Log.info("postId invalid.");
+            return Result.error(Result.ErrorCode.BAD_REQUEST);
+        }
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getPost'");
     }

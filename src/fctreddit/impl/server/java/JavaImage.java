@@ -64,7 +64,7 @@ public class JavaImage implements Image {
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
 
-        String imageUrl = uri[0].toString() +  "/" + imagePath.toString();
+        String imageUrl = uri[0].toString() +  "/" + imagePath;
 
         return Result.ok(imageUrl);
     }

@@ -1,11 +1,15 @@
 package fctreddit.api;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
 /**
  * Represents a Post and a Reply in the system
  */
-
+@Entity
 public class Post {
 
+	@Id
 	private String postId;
 	private String authorId;
 	private long creationTimestamp;
@@ -14,12 +18,13 @@ public class Post {
 	private String parentUrl; //This should be null when this is a top level post.
 	private int upVote;
 	private int downVote;
-	
-	
+	private int numReplies;
+
+
 	public Post() {
 		
 	}
-	
+
 	public Post(String authorId, String content) {
 		this.postId = null;
 		this.authorId = authorId;
@@ -29,6 +34,7 @@ public class Post {
 		this.parentUrl = null;
 		this.upVote = 0;
 		this.downVote = 0;
+		this.numReplies = 0;
 	}
 	
 	public Post(String authorId, String content, String parentUrl) {
@@ -117,6 +123,10 @@ public class Post {
 	public void setDownVote(int downVote) {
 		this.downVote = downVote;
 	}
+
+	public int getNumReplies() {return numReplies;}
+
+	public int setNumReplies(int numReplies) {return numReplies;}
 
 	public int hashCode() {
 		final int prime = 31;
