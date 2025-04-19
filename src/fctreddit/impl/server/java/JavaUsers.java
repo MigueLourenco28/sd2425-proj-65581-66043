@@ -1,6 +1,5 @@
 package fctreddit.impl.server.java;
 
-import java.awt.image.DirectColorModel;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
@@ -39,16 +38,15 @@ public class JavaUsers implements Users {
 				user.getFullName() == null || user.getFullName().isEmpty() ||
 				user.getEmail() == null || user.getEmail().isEmpty()) {
 			Log.info("User object invalid.");
-			return Result.error(ErrorCode.BAD_REQUEST);
+			throw new WebApplicationException(Status.BAD_REQUEST);
 		}
 
 		try {
-
 			hibernate.persist(user);
 		} catch (Exception e) {
 			e.printStackTrace(); //Most likely the exception is due to the user already existing...
 			Log.info("User already exists.");
-			return Result.error(ErrorCode.CONFLICT);
+			throw new WebApplicationException(Status.CONFLICT);
 		}
 		
 		return Result.ok(user.getUserId());
@@ -62,7 +60,7 @@ public class JavaUsers implements Users {
 		if (userId == null || userId.isEmpty() ||
 				password == null || password.isEmpty()) {
 			Log.info("UserId or password null.");
-			return Result.error(ErrorCode.FORBIDDEN);
+			throw new WebApplicationException(Status.FORBIDDEN);
 		}
 
 		User user = null;
@@ -70,19 +68,19 @@ public class JavaUsers implements Users {
 			user = hibernate.get(User.class, userId);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Result.error(ErrorCode.NOT_FOUND);
+			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
 		// Check if user exists
 		if (user == null) {
 			Log.info("User does not exist.");
-			return Result.error(ErrorCode.NOT_FOUND);
+			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
 		// Check if the password is correct
 		if (!user.getPassword().equals(password)) {
 			Log.info("Password is incorrect.");
-			return Result.error(ErrorCode.FORBIDDEN);
+			throw new WebApplicationException(Status.FORBIDDEN);
 		}
 
 		return Result.ok(user);
@@ -96,19 +94,19 @@ public class JavaUsers implements Users {
 			password == null || password.isEmpty() ||
 			user == null) { // Check if userId, password or user is null
             Log.info("Invalid input.");
-			return Result.error(ErrorCode.BAD_REQUEST);
+            throw new WebApplicationException(Status.BAD_REQUEST);
         }
 
         User existingUser = getUser(userId, password).value();
 
 		if(existingUser == null) {
 			Log.info("User does not exist.");
-			return Result.error(ErrorCode.NOT_FOUND);
+			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
 		if(!password.equals(existingUser.getPassword())) {
 			Log.info("Password is incorrect.");
-			return Result.error(ErrorCode.FORBIDDEN);
+			throw new WebApplicationException(Status.FORBIDDEN);
 		}
 
 
@@ -126,7 +124,7 @@ public class JavaUsers implements Users {
             hibernate.update(existingUser); // Update the user in the database
         } catch (Exception e) {
             e.printStackTrace();
-			return Result.error(ErrorCode.INTERNAL_ERROR);
+            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
 
         return Result.ok(existingUser);
@@ -140,7 +138,7 @@ public class JavaUsers implements Users {
 		if (userId == null || userId.isEmpty() ||
 			password == null || password.isEmpty()) { // Check if userId or password is null
             Log.info("Invalid input.");
-			return Result.error(ErrorCode.BAD_REQUEST);
+            throw new WebApplicationException(Status.BAD_REQUEST);
         }
 
         User user = getUser(userId, password).value();
@@ -148,27 +146,28 @@ public class JavaUsers implements Users {
 
 		if(user == null) {
 			Log.info("User does not exist.");
-			return Result.error(ErrorCode.NOT_FOUND);
+			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
 		if(!password.equals(user.getPassword())) {
 			Log.info("Password is incorrect.");
-			return Result.error(ErrorCode.FORBIDDEN);
+			throw new WebApplicationException(Status.FORBIDDEN);
 		}
 
         try {
 			if(user.getAvatarUrl() != null) {
+				//TODO: delete the image from the image server
 				URI[] uri = discovery.knownUrisOf("Image",1);
 				ImageClient imageClient = new RestImageClient(uri[0]);
 				String[] split = user.getAvatarUrl().split("/");
-				String[] split2 = split[6].split("\\.");
+				String[] split2 = split[6].split("//.");
 				String imageId = split2[0];
 				imageClient.deleteImage(userId,imageId,password);
 			}
             hibernate.delete(user);
         } catch (Exception e) {
             e.printStackTrace();
-			return Result.error(ErrorCode.INTERNAL_ERROR);
+            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
 
         return Result.ok(user); // Return the deleted user object
