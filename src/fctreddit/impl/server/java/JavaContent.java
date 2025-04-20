@@ -5,14 +5,17 @@ import fctreddit.Discovery;
 import fctreddit.api.Post;
 import fctreddit.api.User;
 import fctreddit.api.java.Content;
+import fctreddit.api.java.Image;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
+import fctreddit.api.java.Users;
 import fctreddit.clients.java.UsersClient;
 import fctreddit.clients.rest.UserClients.RestUsersClient;
 import fctreddit.impl.server.persistence.Hibernate;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response.Status;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -91,7 +94,7 @@ public class JavaContent implements Content {
     public Result<Post> getPost(String postId) {
         Log.info("getPost : post = " + postId);
 
-		// Check if user is valid
+		// Check if the post is valid
 		if (postId == null || postId.isEmpty()) {
 			Log.info("PostId null.");
 			throw new WebApplicationException(Status.FORBIDDEN);
@@ -117,7 +120,17 @@ public class JavaContent implements Content {
     @Override
     public Result<List<String>> getPostAnswers(String postId, long maxTimeout) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPostAnswers'");
+
+        Post post = getPost(postId).value();
+
+        if(maxTimeout > 0){
+            //temos de adicionar um wait mas nao sei como se faz.
+            return null;
+        }else{
+            List<String> responses = hibernate.jpql("SELECT u.postId FROM Post u WHERE u.mediaUrl LIKE '%" + postId +"%'", String.class);
+        return Result.ok(responses);
+        }
+
     }
 
     @Override
@@ -169,7 +182,39 @@ public class JavaContent implements Content {
     @Override
     public Result<Void> deletePost(String postId, String userPassword) {
         // TODO Auto-generated method stub
+
+       Post post = getPost(postId).value();
+        try {
+            ClientFactory clientFactory = ClientFactory.getInstance();
+            Users userClient = clientFactory.getUserClient();
+            userClient.getUser(post.getAuthorId(), userPassword).value();
+            Image imageClient = clientFactory.getImageClient();
+            if(post.getMediaUrl() != null) {
+                String[] split = post.getMediaUrl().split("/");
+                String[] split2 = split[6].split("//.");
+                String imageId = split2[0];
+                imageClient.deleteImage(post.getAuthorId(),imageId, userPassword);
+            }
+            //adicionar o remover posts q deram a resposta ao post principal em cascata
+            List<String> replies = getPostAnswers(postId,100000).value();
+            deleteCascade(replies);
+            hibernate.delete(post);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         throw new UnsupportedOperationException("Unimplemented method 'deletePost'");
+    }
+
+    private void deleteCascade(List<String> repliesIds){
+        for(String reply : repliesIds){
+            Post post = getPost(reply).value();
+            hibernate.delete(post);
+            if(!getPostAnswers(reply, 100000).value().isEmpty()){
+                deleteCascade(getPostAnswers(reply, 100000).value());
+            }
+        }
     }
 
     @Override

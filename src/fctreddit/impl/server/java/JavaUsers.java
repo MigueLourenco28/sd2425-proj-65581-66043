@@ -2,10 +2,14 @@ package fctreddit.impl.server.java;
 
 import java.net.URI;
 import java.nio.file.Paths;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.logging.Logger;
 
 import fctreddit.Discovery;
+import fctreddit.api.Post;
+import fctreddit.api.java.Content;
+import fctreddit.api.java.Image;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
 import fctreddit.clients.java.ImageClient;
@@ -38,7 +42,7 @@ public class JavaUsers implements Users {
 				user.getFullName() == null || user.getFullName().isEmpty() ||
 				user.getEmail() == null || user.getEmail().isEmpty()) {
 			Log.info("User object invalid.");
-			throw new WebApplicationException(Status.BAD_REQUEST);
+			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 
 		try {
@@ -48,7 +52,7 @@ public class JavaUsers implements Users {
 			Log.info("User already exists.");
 			throw new WebApplicationException(Status.CONFLICT);
 		}
-		
+
 		return Result.ok(user.getUserId());
 	}
 
@@ -57,10 +61,13 @@ public class JavaUsers implements Users {
 		Log.info("getUser : user = " + userId + "; pwd = " + password);
 
 		// Check if user is valid
-		if (userId == null || userId.isEmpty() ||
-				password == null || password.isEmpty()) {
+		if(password == null || password.isEmpty()) {
 			Log.info("UserId or password null.");
-			throw new WebApplicationException(Status.FORBIDDEN);
+			return Result.error(ErrorCode.FORBIDDEN);
+		}
+		if(userId == null || userId.isEmpty()) {
+			Log.info("UserId or password null.");
+			return Result.error(ErrorCode.NOT_FOUND);
 		}
 
 		User user = null;
@@ -68,19 +75,19 @@ public class JavaUsers implements Users {
 			user = hibernate.get(User.class, userId);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new WebApplicationException(Status.NOT_FOUND);
+			return Result.error(ErrorCode.NOT_FOUND);
 		}
 
 		// Check if user exists
 		if (user == null) {
 			Log.info("User does not exist.");
-			throw new WebApplicationException(Status.NOT_FOUND);
+			return Result.error(ErrorCode.NOT_FOUND);
 		}
 
 		// Check if the password is correct
 		if (!user.getPassword().equals(password)) {
 			Log.info("Password is incorrect.");
-			throw new WebApplicationException(Status.FORBIDDEN);
+			return Result.error(ErrorCode.FORBIDDEN);
 		}
 
 		return Result.ok(user);
@@ -91,32 +98,37 @@ public class JavaUsers implements Users {
 		Log.info("updateUser : user = " + userId + "; pwd = " + password + " ; userData = " + user);
 		//---------------Added code------------------//
 		if (userId == null || userId.isEmpty() ||
-			password == null || password.isEmpty() ||
-			user == null) { // Check if userId, password or user is null
-            Log.info("Invalid input.");
-            throw new WebApplicationException(Status.BAD_REQUEST);
-        }
+				password == null || password.isEmpty() ||
+				user == null) { // Check if userId, password or user is null
+			Log.info("Invalid input.");
+			return Result.error(ErrorCode.BAD_REQUEST);
+		}
 
-        User existingUser = getUser(userId, password).value();
+		Result<User> userResult = getUser(userId, password);
+		if (!userResult.isOK()) {
+			Log.warning("User not authenticated: " + userResult.error());
+			return Result.error(userResult.error());
+		}
+		User existingUser = userResult.value();
 
-        if (user.getFullName() != null) {
-            existingUser.setFullName(user.getFullName());
-        }
-        if (user.getEmail() != null) {
-            existingUser.setEmail(user.getEmail());
-        }
-        if (user.getPassword() != null) {
-            existingUser.setPassword(user.getPassword());
-        }
+		if (user.getFullName() != null) {
+			existingUser.setFullName(user.getFullName());
+		}
+		if (user.getEmail() != null) {
+			existingUser.setEmail(user.getEmail());
+		}
+		if (user.getPassword() != null) {
+			existingUser.setPassword(user.getPassword());
+		}
 
-        try {
-            hibernate.update(existingUser); // Update the user in the database
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-        }
+		try {
+			hibernate.update(existingUser); // Update the user in the database
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+		}
 
-        return Result.ok(existingUser);
+		return Result.ok(existingUser);
 		//---------------End of added code------------------//
 	}
 
@@ -125,33 +137,51 @@ public class JavaUsers implements Users {
 		Log.info("deleteUser : user = " + userId + "; pwd = " + password);
 		//---------------Added code------------------//
 		if (userId == null || userId.isEmpty() ||
-			password == null || password.isEmpty()) { // Check if userId or password is null
-            Log.info("Invalid input.");
-            throw new WebApplicationException(Status.BAD_REQUEST);
-        }
+				password == null || password.isEmpty()) { // Check if userId or password is null
+			Log.info("Invalid input.");
+			return Result.error(ErrorCode.BAD_REQUEST);
+		}
 
-        User user = getUser(userId, password).value();
-
+		Result<User> userResult = getUser(userId, password);
+		if (!userResult.isOK()) {
+			Log.warning("User not authenticated: " + userResult.error());
+			return Result.error(ErrorCode.FORBIDDEN);
+		}
+		User user = userResult.value();
 
 		if(user == null) {
 			Log.info("User does not exist.");
-			throw new WebApplicationException(Status.NOT_FOUND);
+			return Result.error(ErrorCode.NOT_FOUND);
 		}
 
 		if(!password.equals(user.getPassword())) {
 			Log.info("Password is incorrect.");
-			throw new WebApplicationException(Status.FORBIDDEN);
+			return Result.error(ErrorCode.FORBIDDEN);
 		}
 
-        try {
+		try {
 			if(user.getAvatarUrl() != null) {
+
 				//TODO: delete the image from the image server
-				URI[] uri = discovery.knownUrisOf("Image",1);
-				ImageClient imageClient = new RestImageClient(uri[0]);
+				//URI[] uri = discovery.knownUrisOf("Image",1);
+				//ImageClient imageClient = new RestImageClient(uri[0]);
+				ClientFactory clientFactory  = ClientFactory.getInstance();
+				Image imageClient = clientFactory.getImageClient();
 				String[] split = user.getAvatarUrl().split("/");
 				String[] split2 = split[6].split("//.");
 				String imageId = split2[0];
 				imageClient.deleteImage(userId,imageId,password);
+
+				/**
+				List<Post> post = hibernate.jpql("SELECT u FROM Post u WHERE u.authorId = '" + userId + "'", Post.class);
+				//Content contentClient = clientFactory.getContentClient();
+				//questionar se podemos alterar diretamente no
+				for(Post p : post) {
+					p.setAuthorId(null);
+					hibernate.update(p);
+				}
+				//n sei se temos de mudar as imagens de diretoria
+				 */
 			}
             hibernate.delete(user);
         } catch (Exception e) {
