@@ -7,7 +7,9 @@ import fctreddit.api.User;
 import fctreddit.api.java.Content;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
+import fctreddit.clients.java.ImageClient;
 import fctreddit.clients.java.UsersClient;
+import fctreddit.clients.rest.ImageClients.RestImageClient;
 import fctreddit.clients.rest.UserClients.RestUsersClient;
 import fctreddit.impl.server.persistence.Hibernate;
 import jakarta.ws.rs.WebApplicationException;
@@ -138,21 +140,28 @@ public class JavaContent implements Content {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
-        URI[] uri = discovery.knownUrisOf("Users", 1);
-        UsersClient client = new RestUsersClient(uri[0]);
-        User author = client.getUser(existingPost.getAuthorId(), userPassword).value();
+        URI[] userUri = discovery.knownUrisOf("Users", 1);
+        UsersClient userClient = new RestUsersClient(userUri[0]);
+        User author = userClient.getUser(existingPost.getAuthorId(), userPassword).value();
 
 		if(author == Result.error(ErrorCode.FORBIDDEN)) {
 			Log.info("Password is incorrect.");
 			throw new WebApplicationException(Status.FORBIDDEN);
 		}
 
-
         if (post.getContent() != null) {
             existingPost.setContent(post.getContent());
         }
+
+        URI[] imageUri = discovery.knownUrisOf("Image", 1);
+        ImageClient imageClient = new RestImageClient(imageUri[0]);
+
         if (post.getMediaUrl() != null) {
-            //TODO: check if the mediaUrl exists/has been created
+            byte[] imageUrl = imageClient.getImage(existingPost.getAuthorId(), post.getMediaUrl()).value();//Check if the mediaUrl exists/has been created
+            if(imageUrl == Result.error(ErrorCode.NOT_FOUND).value()) {
+                Log.info("Image does not exist.");
+                throw new WebApplicationException(Status.NOT_FOUND);
+            }
             existingPost.setMediaUrl(post.getMediaUrl());
         }
 

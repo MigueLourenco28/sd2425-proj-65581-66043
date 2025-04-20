@@ -17,7 +17,7 @@ public class ImageResource implements RestImage {
 
     private Image impl;
 
-    public ImageResource(Image impl) {
+    public ImageResource() {
         //hibernate = Hibernate.getInstance();
         impl = new JavaImage();
     }
@@ -35,7 +35,7 @@ public class ImageResource implements RestImage {
 
     @Override
     public byte[] getImage(String userId, String imageId) {
-        Log.info("createImage by user :" + userId);
+        Log.info("getImage by user :" + userId);
 
         Result<byte[]> res = impl.getImage(userId, imageId);
         if(!res.isOK()) {

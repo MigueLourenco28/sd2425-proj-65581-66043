@@ -11,6 +11,7 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.UUID;
@@ -39,16 +40,18 @@ public class JavaImage implements Image {
 
         URI[] uri = discovery.knownUrisOf("Users", 1);
         UsersClient client = new RestUsersClient(uri[0]);
-        User user = client.getUser(userId, password).value();
+        User user = client.getUser(userId, password).value(); // Checks if user exists and if password is correct
 
         String imageId = UUID.randomUUID().toString(); 
 
-        Path imagePath = Paths.get("fctreddit", "images", user.getUserId(), imageId + ".jpg");
+        Path imagePath = Paths.get("/home/sd/images", user.getUserId(), imageId + ".jpg");
 
         try {
-            Files.createDirectories(imagePath.getParent());
-            Files.write(imagePath, imageContents);
+            File f = imagePath.getParent().toFile();
+            f.mkdirs();
+            Files.write(imagePath, imageContents); // Save the image to container
         } catch (IOException e) {
+            e.printStackTrace();
             Log.severe("Error saving image: " + e.getMessage());
             return Result.error(ErrorCode.INTERNAL_ERROR);
         }
