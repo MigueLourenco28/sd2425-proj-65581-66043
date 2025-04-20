@@ -8,11 +8,10 @@ import fctreddit.api.java.Content;
 import fctreddit.api.java.Image;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
-<<<<<<< HEAD
+
 import fctreddit.clients.java.ImageClient;
-=======
 import fctreddit.api.java.Users;
->>>>>>> 47ffd40cec97916a3edc3432429bfe08473d6b81
+
 import fctreddit.clients.java.UsersClient;
 import fctreddit.clients.rest.ImageClients.RestImageClient;
 import fctreddit.clients.rest.UserClients.RestUsersClient;

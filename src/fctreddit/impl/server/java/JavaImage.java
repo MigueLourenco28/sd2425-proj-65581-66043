@@ -5,6 +5,8 @@ import fctreddit.api.User;
 import fctreddit.api.java.Image;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
+import fctreddit.api.java.Users;
+import fctreddit.clients.java.Client;
 import fctreddit.clients.java.UsersClient;
 import fctreddit.clients.rest.UserClients.RestUsersClient;
 import jakarta.ws.rs.WebApplicationException;
@@ -37,26 +39,60 @@ public class JavaImage implements Image {
             Log.info("Image or password null.");
             return Result.error(ErrorCode.BAD_REQUEST);
         }
+        User user = null;
+        String URI;
+        try {
+            ClientFactory clientFactory = ClientFactory.getInstance();
+            Users client = clientFactory.getUserClient();
+            Result<User> userResult = client.getUser(userId, password);
+            if (!userResult.isOK()) {
+                Log.warning("User not authenticated: " + userResult.error());
+                return Result.error(userResult.error());
+            }
+            user = userResult.value();
+            URI = clientFactory.getURIClient().toString();
+        } catch (Exception e) {
+            return Result.error(ErrorCode.NOT_FOUND);
+        }// Checks if user exists and if password is correct
 
-        URI[] uri = discovery.knownUrisOf("Users", 1);
-        UsersClient client = new RestUsersClient(uri[0]);
-        User user = client.getUser(userId, password).value(); // Checks if user exists and if password is correct
 
-        String imageId = UUID.randomUUID().toString(); 
+        if (user == null) {
+            Log.info("User not found.");
+            return Result.error(ErrorCode.NOT_FOUND);
+        }
+        String imageId = UUID.randomUUID().toString();
 
-        Path imagePath = Paths.get("/home/sd/images", user.getUserId(), imageId + ".jpg");
+
+
+        Path baseDir = Paths.get("/home/sd/images");
+
+        try {
+            if (!Files.exists(baseDir)) {
+                Files.createDirectories(baseDir);
+                Log.info("Diretório criado: " + baseDir.toString());
+            }
+        } catch (IOException e) {
+            Log.severe("Erro ao verificar/criar diretório base: " + e.getMessage());
+            return Result.error(ErrorCode.INTERNAL_ERROR);
+        }
+        Path userPath = baseDir.resolve(userId);
+        Path imagePath = userPath.resolve(imageId + ".jpg");
 
         try {
             File f = imagePath.getParent().toFile();
-            f.mkdirs();
-            Files.write(imagePath, imageContents); // Save the image to container
+            if (!f.exists()) {
+                f.mkdirs();
+                Log.info("Diretório do utilizador criado: " + f.getAbsolutePath());
+            }
+            Files.write(imagePath, imageContents);
+            Log.info("Imagem salva em: " + imagePath);
         } catch (IOException e) {
             e.printStackTrace();
             Log.severe("Error saving image: " + e.getMessage());
             return Result.error(ErrorCode.INTERNAL_ERROR);
         }
 
-        String imageUrl = uri[0].toString() +  "/" + imagePath.toString();
+        String imageUrl = String.format("%s/images/%s/%s.jpg", URI, user.getUserId(), imageId);
 
         return Result.ok(imageUrl);
     }
