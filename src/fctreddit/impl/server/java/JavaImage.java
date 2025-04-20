@@ -41,18 +41,6 @@ public class JavaImage implements Image {
         UsersClient client = new RestUsersClient(uri[0]);
         User user = client.getUser(userId, password).value();
 
-        if (user == null) {
-            Log.info("User does not exist.");
-            return Result.error(ErrorCode.NOT_FOUND);
-        }
-
-        String pwd = user.getPassword();
-
-        if (!pwd.equals(password)) {
-            Log.info("Password is incorrect.");
-            return Result.error(ErrorCode.FORBIDDEN);
-        }
-
         String imageId = UUID.randomUUID().toString(); 
 
         Path imagePath = Paths.get("fctreddit", "images", user.getUserId(), imageId + ".jpg");

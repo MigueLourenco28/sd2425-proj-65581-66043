@@ -99,17 +99,6 @@ public class JavaUsers implements Users {
 
         User existingUser = getUser(userId, password).value();
 
-		if(existingUser == null) {
-			Log.info("User does not exist.");
-			throw new WebApplicationException(Status.NOT_FOUND);
-		}
-
-		if(!password.equals(existingUser.getPassword())) {
-			Log.info("Password is incorrect.");
-			throw new WebApplicationException(Status.FORBIDDEN);
-		}
-
-
         if (user.getFullName() != null) {
             existingUser.setFullName(user.getFullName());
         }

@@ -1,17 +1,26 @@
 package fctreddit.impl.server.java;
 
 
+import fctreddit.Discovery;
 import fctreddit.api.Post;
 import fctreddit.api.User;
 import fctreddit.api.java.Content;
 import fctreddit.api.java.Result;
+import fctreddit.api.java.Result.ErrorCode;
+import fctreddit.clients.java.UsersClient;
+import fctreddit.clients.rest.UserClients.RestUsersClient;
 import fctreddit.impl.server.persistence.Hibernate;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response.Status;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 public class JavaContent implements Content {
+
+    public static Discovery discovery;
 
     public static Hibernate hibernate;
 
@@ -80,14 +89,29 @@ public class JavaContent implements Content {
 
     @Override
     public Result<Post> getPost(String postId) {
-        Log.info("getPost : " + postId);
+        Log.info("getPost : post = " + postId);
 
-        if(postId == null){
-            Log.info("postId invalid.");
-            return Result.error(Result.ErrorCode.BAD_REQUEST);
-        }
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPost'");
+		// Check if user is valid
+		if (postId == null || postId.isEmpty()) {
+			Log.info("PostId null.");
+			throw new WebApplicationException(Status.FORBIDDEN);
+		}
+
+		Post post = null;
+		try {
+			post = hibernate.get(Post.class, postId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+
+		// Check if user exists
+		if (post == null) {
+			Log.info("Post does not exist.");
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+
+		return Result.ok(post);
     }
 
     @Override
@@ -98,8 +122,48 @@ public class JavaContent implements Content {
 
     @Override
     public Result<Post> updatePost(String postId, String userPassword, Post post) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updatePost'");
+        Log.info("updatePost : post = " + postId + "; userPassword = " + userPassword + " ; postData = " + post);
+
+		if (postId == null || postId.isEmpty() ||
+			userPassword == null || userPassword.isEmpty() ||
+			post == null) { // Check if userId, password or user is null
+            Log.info("Invalid input.");
+            throw new WebApplicationException(Status.BAD_REQUEST);
+        }
+
+        Post existingPost = getPost(postId).value();
+
+		if(existingPost == null) {
+			Log.info("Post does not exist.");
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+
+        URI[] uri = discovery.knownUrisOf("Users", 1);
+        UsersClient client = new RestUsersClient(uri[0]);
+        User author = client.getUser(existingPost.getAuthorId(), userPassword).value();
+
+		if(author == Result.error(ErrorCode.FORBIDDEN)) {
+			Log.info("Password is incorrect.");
+			throw new WebApplicationException(Status.FORBIDDEN);
+		}
+
+
+        if (post.getContent() != null) {
+            existingPost.setContent(post.getContent());
+        }
+        if (post.getMediaUrl() != null) {
+            //TODO: check if the mediaUrl exists/has been created
+            existingPost.setMediaUrl(post.getMediaUrl());
+        }
+
+        try {
+            hibernate.update(existingPost); // Update the user in the database
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+        }
+
+        return Result.ok(existingPost);
     }
 
     @Override
