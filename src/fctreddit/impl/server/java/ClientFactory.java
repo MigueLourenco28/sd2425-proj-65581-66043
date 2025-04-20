@@ -33,9 +33,9 @@ public class ClientFactory {
         URI[] uris = discovery.knownUrisOf("Users", 1);
         String[] splitUri = uris[0].toString().split("/");
 
-        if(splitUri[2].equals("rest")){
+        if(splitUri[3].equals("rest")){
             return new RestUsersClient(uris[0]);
-        }else if (splitUri[2].equals("grpc")){
+        }else if (splitUri[3].equals("grpc")){
             return null;
         }else{
             throw new IOException("Not supported yet.");
@@ -66,6 +66,11 @@ public class ClientFactory {
         }else{
             throw new IOException("Not supported yet.");
         }
+    }
+
+    public URI getURIClient() throws IOException {
+        URI[] uris = discovery.knownUrisOf("URI", 1);
+        return uris[0];
     }
 
 
