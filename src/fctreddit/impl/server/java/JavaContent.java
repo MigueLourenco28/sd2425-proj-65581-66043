@@ -4,6 +4,7 @@ package fctreddit.impl.server.java;
 import fctreddit.Discovery;
 import fctreddit.api.Post;
 import fctreddit.api.User;
+import fctreddit.api.Votes;
 import fctreddit.api.java.Content;
 import fctreddit.api.java.Image;
 import fctreddit.api.java.Result;
@@ -33,6 +34,8 @@ public class JavaContent implements Content {
     private static final String USERS = "Users";
     private static final String IMAGE = "Image";
     private static final String CONTENT = "Content";
+    private static final String UP = "UP";
+    private static final String DOWN = "DOWN";
 
     private static Logger Log = Logger.getLogger(JavaContent.class.getName());
 
@@ -116,7 +119,7 @@ public class JavaContent implements Content {
 		// Check if the post is valid
 		if (postId == null || postId.isEmpty()) {
 			Log.info("PostId null.");
-			throw new WebApplicationException(Status.FORBIDDEN);
+            return Result.error(ErrorCode.FORBIDDEN);
 		}
 
 		Post post = null;
@@ -124,13 +127,13 @@ public class JavaContent implements Content {
 			post = hibernate.get(Post.class, postId);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new WebApplicationException(Status.NOT_FOUND);
+            return Result.error(ErrorCode.NOT_FOUND);
 		}
 
 		// Check if user exists
 		if (post == null) {
 			Log.info("Post does not exist.");
-			throw new WebApplicationException(Status.NOT_FOUND);
+            return Result.error(ErrorCode.NOT_FOUND);
 		}
 
 		return Result.ok(post);
@@ -229,12 +232,12 @@ public class JavaContent implements Content {
             List<String> replies = getPostAnswers(postId,100000).value();
             deleteCascade(replies);
             hibernate.delete(post);
+            return Result.ok(null);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        throw new UnsupportedOperationException("Unimplemented method 'deletePost'");
     }
 
     private void deleteCascade(List<String> repliesIds){
@@ -249,8 +252,39 @@ public class JavaContent implements Content {
 
     @Override
     public Result<Void> upVotePost(String postId, String userId, String userPassword) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'upVotePost'");
+        Post post;
+        Result<Post> postResult = getPost(postId);
+        if(!postResult.isOK()){
+            Log.info("Post not authenticated: " + postId);
+            return Result.error(postResult.error());
+        }
+        post = postResult.value();
+
+
+        try {
+            ClientFactory clientFactory = ClientFactory.getInstance();
+            Users client = clientFactory.getUserClient();
+            Result<User> userResult = client.getUser(post.getAuthorId(), userPassword);
+            if (!userResult.isOK()) {
+                Log.warning("User not authenticated: " + userResult.error());
+                return Result.error(userResult.error());
+            }
+
+        } catch (IOException e) {
+            return Result.error(ErrorCode.NOT_FOUND);
+        }
+
+        try{
+            hibernate.persist(Votes.class, new Votes(userId,postId,UP));
+            post.setUpVote(post.getUpVote()+1);
+            hibernate.update(Post.class, post);
+            return Result.ok(null);
+        }catch (Exception e) {
+            return Result.error(ErrorCode.NOT_FOUND);
+
+        }
+
+
     }
 
     @Override
