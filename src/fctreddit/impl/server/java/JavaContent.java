@@ -43,7 +43,6 @@ public class JavaContent implements Content {
     @Override
     public Result<String> createPost(Post post, String userPassword) {
 
-        User user;
         try {
             ClientFactory clientFactory = ClientFactory.getInstance();
             Users client = clientFactory.getUserClient();
@@ -52,24 +51,30 @@ public class JavaContent implements Content {
                 Log.warning("User not authenticated: " + userResult.error());
                 return Result.error(userResult.error());
             }
-            user = userResult.value();
-
 
         } catch (IOException e) {
             return Result.error(ErrorCode.NOT_FOUND);
         }
 
-        if (post.getParentUrl() != null && hibernate.get(Post.class, post.getParentUrl()) == null) {
-            Log.info("Post " + post.getAuthorId() + " not found");
-            return Result.error(Result.ErrorCode.NOT_FOUND);
+        if (post.getParentUrl() != null){
+            String[] splits = post.getParentUrl().split("/");
+            String parentId = splits[splits.length - 1];
+
+            Post parent = hibernate.get(Post.class, parentId);
+
+            if(parent == null) {
+                Log.info("Post " + post.getAuthorId() + " not found");
+                return Result.error(Result.ErrorCode.NOT_FOUND);
+            }
+            parent.setNumReplies(parent.getNumReplies() + 1);
+            hibernate.update(parent);
         }
 
+        String postId = UUID.randomUUID().toString();
+        post.setPostId(postId);
+
         try {
-            String postId = UUID.randomUUID().toString();
-            post.setPostId(postId);
-            if(post.getParentUrl() != null){
-              //fazer aqui a atualizaçao do numReplies;
-            }
+
             hibernate.persist(post);
             return Result.ok(postId);
 
