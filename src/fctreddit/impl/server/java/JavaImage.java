@@ -28,7 +28,6 @@ public class JavaImage implements Image {
     private static final String IMAGE = "Image";
     private static final String CONTENT = "Content";
 
-    public static Discovery discovery;
 
     private static Logger Log = Logger.getLogger(JavaImage.class.getName());
 

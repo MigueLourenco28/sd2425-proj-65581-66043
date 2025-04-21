@@ -167,7 +167,7 @@ public class Discovery {
 				try {
 					lock.wait();
 				} catch (InterruptedException e) {
-					break;
+
 				}
 			}
 			int size = services.get(serviceName).size();

@@ -27,9 +27,12 @@ import java.util.logging.Logger;
 
 public class JavaContent implements Content {
 
-    public static Discovery discovery;
 
     public static Hibernate hibernate;
+
+    private static final String USERS = "Users";
+    private static final String IMAGE = "Image";
+    private static final String CONTENT = "Content";
 
     private static Logger Log = Logger.getLogger(JavaContent.class.getName());
 
@@ -40,18 +43,25 @@ public class JavaContent implements Content {
     @Override
     public Result<String> createPost(Post post, String userPassword) {
 
-        User user = hibernate.get(User.class, post.getAuthorId());
-        if (user == null) {
-            Log.info("User " + post.getAuthorId() + " not found");
-            return Result.error(Result.ErrorCode.NOT_FOUND);
+        User user;
+        try {
+            ClientFactory clientFactory = ClientFactory.getInstance();
+            Users client = clientFactory.getUserClient();
+            Result<User> userResult = client.getUser(post.getAuthorId(), userPassword);
+            if (!userResult.isOK()) {
+                Log.warning("User not authenticated: " + userResult.error());
+                return Result.error(userResult.error());
+            }
+            user = userResult.value();
+
+
+        } catch (IOException e) {
+            return Result.error(ErrorCode.NOT_FOUND);
         }
+
         if (post.getParentUrl() != null && hibernate.get(Post.class, post.getParentUrl()) == null) {
             Log.info("Post " + post.getAuthorId() + " not found");
             return Result.error(Result.ErrorCode.NOT_FOUND);
-        }
-        if (!user.getPassword().equals(userPassword)) {
-            Log.info("User " + post.getAuthorId() + " password does not match");
-            return Result.error(Result.ErrorCode.FORBIDDEN);
         }
 
         try {
@@ -65,7 +75,7 @@ public class JavaContent implements Content {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error(Result.ErrorCode.CONFLICT);
+            return Result.error(ErrorCode.BAD_REQUEST);
         }
     }
 

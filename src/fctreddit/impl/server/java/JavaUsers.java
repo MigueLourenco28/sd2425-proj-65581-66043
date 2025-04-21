@@ -22,7 +22,6 @@ import fctreddit.impl.server.persistence.Hibernate;
 
 public class JavaUsers implements Users {
 
-	private Discovery discovery;
 
 	private static Logger Log = Logger.getLogger(JavaUsers.class.getName());
 
@@ -50,7 +49,7 @@ public class JavaUsers implements Users {
 		} catch (Exception e) {
 			e.printStackTrace(); //Most likely the exception is due to the user already existing...
 			Log.info("User already exists.");
-			throw new WebApplicationException(Status.CONFLICT);
+			return Result.error(ErrorCode.CONFLICT);
 		}
 
 		return Result.ok(user.getUserId());
@@ -163,26 +162,13 @@ public class JavaUsers implements Users {
 		try {
 			if(user.getAvatarUrl() != null) {
 
-				//TODO: delete the image from the image server
-				//URI[] uri = discovery.knownUrisOf("Image",1);
-				//ImageClient imageClient = new RestImageClient(uri[0]);
 				ClientFactory clientFactory  = ClientFactory.getInstance();
 				Image imageClient = clientFactory.getImageClient();
 				String[] split = user.getAvatarUrl().split("/");
 				String[] split2 = split[6].split("//.");
 				String imageId = split2[0];
 				imageClient.deleteImage(userId,imageId,password);
-
-				/**
-				List<Post> post = hibernate.jpql("SELECT u FROM Post u WHERE u.authorId = '" + userId + "'", Post.class);
-				//Content contentClient = clientFactory.getContentClient();
-				//questionar se podemos alterar diretamente no
-				for(Post p : post) {
-					p.setAuthorId(null);
-					hibernate.update(p);
-				}
-				//n sei se temos de mudar as imagens de diretoria
-				 */
+				//implementar mudar a diretoria das imagens, para um user com null
 			}
             hibernate.delete(user);
         } catch (Exception e) {

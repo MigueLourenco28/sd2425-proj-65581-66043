@@ -17,7 +17,7 @@ public class ContentResource implements RestContent {
 
     private Content cont;
 
-    public ContentResource(Content cont) {
+    public ContentResource() {
         cont = new JavaContent();
     }
 
