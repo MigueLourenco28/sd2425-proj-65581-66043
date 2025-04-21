@@ -83,14 +83,7 @@ Critérios de Avaliação
   - [ ]Armazenar e fornecer avatares e imagens associadas aos conteúdos;
   - [ ]Remover imagens quando o conteúdo for apagado.
 
-## Ficheiros a Criar/Modificar
-No projeto Maven fornecido (sd2425-proj-api.zip), precisas de criar/alterar ficheiros Java para implementar as operações mencionadas nos serviços REST e gRPC.
-
-## Criar:
-Implementações dos serviços REST e gRPC para Users, Content e Images.
-Classes para a auto-configuração via multicast.
-Classes de manipulação de dados, armazenamento e lógica de negócio.
-
-## Modificar:
-Interfaces pré-definidas no projeto, apenas adicionando operações opcionais ou parâmetros opcionais.
-Qualquer código necessário para garantir a comunicação entre os serviços REST/gRPC.
+## Testes
+  
+- [x] 1: Testa a integridade do ambiente de teste;
+- [ ] 4: 
