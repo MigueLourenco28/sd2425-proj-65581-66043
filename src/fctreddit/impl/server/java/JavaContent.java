@@ -264,7 +264,7 @@ public class JavaContent implements Content {
         try {
             ClientFactory clientFactory = ClientFactory.getInstance();
             Users client = clientFactory.getUserClient();
-            Result<User> userResult = client.getUser(post.getAuthorId(), userPassword);
+            Result<User> userResult = client.getUser(userId, userPassword);
             if (!userResult.isOK()) {
                 Log.warning("User not authenticated: " + userResult.error());
                 return Result.error(userResult.error());
@@ -275,12 +275,54 @@ public class JavaContent implements Content {
         }
 
         try{
-            hibernate.persist(Votes.class, new Votes(userId,postId,UP));
+            Votes vote = new Votes(userId, postId,UP);
+            hibernate.persist(Votes.class, vote);
             post.setUpVote(post.getUpVote()+1);
             hibernate.update(Post.class, post);
             return Result.ok(null);
         }catch (Exception e) {
+            return Result.error(ErrorCode.CONFLICT);
+
+        }
+    }
+
+    @Override
+    public Result<Void> removeUpVotePost(String postId, String userId, String userPassword) {
+        Post post;
+        Result<Post> postResult = getPost(postId);
+        if(!postResult.isOK()){
+            Log.info("Post not authenticated: " + postId);
+            return Result.error(postResult.error());
+        }
+        post = postResult.value();
+
+
+        try {
+            ClientFactory clientFactory = ClientFactory.getInstance();
+            Users client = clientFactory.getUserClient();
+            Result<User> userResult = client.getUser(userId, userPassword);
+            if (!userResult.isOK()) {
+                Log.warning("User not authenticated: " + userResult.error());
+                return Result.error(userResult.error());
+            }
+
+        } catch (IOException e) {
             return Result.error(ErrorCode.NOT_FOUND);
+        }
+
+
+        try{
+            Votes votes = hibernate.get(Votes.class, new Votes(userId,postId));
+            if(!votes.getType().equals(UP)) {
+                Log.warning("User did not vote up: " + postId);
+                return Result.error(ErrorCode.CONFLICT);
+            }
+            hibernate.delete(votes);
+            post.setUpVote(post.getUpVote()-1);
+            hibernate.update(Post.class, post);
+            return Result.ok(null);
+        }catch (Exception d) {
+            return Result.error(ErrorCode.INTERNAL_ERROR);
 
         }
 
@@ -288,21 +330,88 @@ public class JavaContent implements Content {
     }
 
     @Override
-    public Result<Void> removeUpVotePost(String postId, String userId, String userPassword) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeUpVotePost'");
-    }
-
-    @Override
     public Result<Void> downVotePost(String postId, String userId, String userPassword) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'downVotePost'");
+        Post post;
+        Result<Post> postResult = getPost(postId);
+        if(!postResult.isOK()){
+            Log.info("Post not authenticated: " + postId);
+            return Result.error(postResult.error());
+        }
+        post = postResult.value();
+
+
+        try {
+            ClientFactory clientFactory = ClientFactory.getInstance();
+            Users client = clientFactory.getUserClient();
+            Result<User> userResult = client.getUser(userId, userPassword);
+            if (!userResult.isOK()) {
+                Log.warning("User not authenticated: " + userResult.error());
+                return Result.error(userResult.error());
+            }
+        } catch (IOException e) {
+            return Result.error(ErrorCode.INTERNAL_ERROR);
+        }
+
+        try{
+            Log.info("Aqui 1");
+            Votes vote = new Votes(userId,postId,DOWN);
+            Log.info("MERDA");
+            hibernate.persist(Votes.class,vote);
+            Log.info("Aqui 2");
+            post.setUpVote(post.getDownVote()+1);
+            Log.info("Aqui 3");
+            hibernate.update(Post.class, post);
+            Log.info("Aqui 4");
+            return Result.ok(null);
+        }catch (Exception e) {
+            Log.info("merda");
+            return Result.error(ErrorCode.CONFLICT);
+
+        }
+
+
     }
 
     @Override
     public Result<Void> removeDownVotePost(String postId, String userId, String userPassword) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeDownVotePost'");
+        Post post;
+        Result<Post> postResult = getPost(postId);
+        if(!postResult.isOK()){
+            Log.info("Post not authenticated: " + postId);
+            return Result.error(postResult.error());
+        }
+        post = postResult.value();
+
+
+        try {
+            ClientFactory clientFactory = ClientFactory.getInstance();
+            Users client = clientFactory.getUserClient();
+            Result<User> userResult = client.getUser(userId, userPassword);
+            if (!userResult.isOK()) {
+                Log.warning("User not authenticated: " + userResult.error());
+                return Result.error(userResult.error());
+            }
+
+        } catch (IOException e) {
+            return Result.error(ErrorCode.NOT_FOUND);
+        }
+
+
+        try{
+            Votes votes = hibernate.get(Votes.class, new Votes(userId,postId));
+            if(!votes.getType().equals(DOWN)) {
+                Log.warning("User did not vote up: " + postId);
+                return Result.error(ErrorCode.CONFLICT);
+            }
+            hibernate.delete(votes);
+            post.setUpVote(post.getDownVote()-1);
+            hibernate.update(Post.class, post);
+            return Result.ok(null);
+        }catch (Exception d) {
+            return Result.error(ErrorCode.INTERNAL_ERROR);
+
+        }
+
     }
 
     @Override
