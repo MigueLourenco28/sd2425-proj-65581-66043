@@ -75,6 +75,7 @@ public class JavaUsers implements Users {
 			user = hibernate.get(User.class, userId);
 		} catch (Exception e) {
 			e.printStackTrace();
+			Log.info("Bugou");
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
 

@@ -24,6 +24,10 @@ import java.nio.file.Paths;
 
 public class JavaImage implements Image {
 
+    private static final String USERS = "Users";
+    private static final String IMAGE = "Image";
+    private static final String CONTENT = "Content";
+
     public static Discovery discovery;
 
     private static Logger Log = Logger.getLogger(JavaImage.class.getName());
@@ -50,18 +54,15 @@ public class JavaImage implements Image {
                 return Result.error(userResult.error());
             }
             user = userResult.value();
-            URI = clientFactory.getURIClient().toString();
+            URI = clientFactory.getURIClient(IMAGE).toString();
 
         } catch (IOException e) {
             return Result.error(ErrorCode.NOT_FOUND);
         }// Checks if user exists and if password is correct
 
-
-
         String imageId = UUID.randomUUID().toString();
 
-
-        Path baseDir = Paths.get("/home/sd/images");
+        Path baseDir = Paths.get("/home/sd/image");
 
         try {
 
@@ -97,9 +98,9 @@ public class JavaImage implements Image {
             return Result.error(ErrorCode.INTERNAL_ERROR);
         }
 
-        String imageUrl = String.format("%s/images/%s/%s.jpg", URI, user.getUserId(), imageId);
+        String imageUrl = String.format("%s/image/%s/%s.jpg", URI, user.getUserId(), imageId);
 
-
+        Log.info("Imagem salva em: " + imageUrl);
         return Result.ok(imageUrl);
     }
 
@@ -107,9 +108,10 @@ public class JavaImage implements Image {
     public Result<byte[]> getImage(String userId, String imageId) {
 
         Log.info("Imagem recuperado: " + imageId);
-        Path imageDir = Paths.get("/home/sd/images/" + userId + File.separator + imageId + ".jpg");
+        String path ="/home/sd/image/" + userId + File.separator + imageId;
+        Path imageDir = Paths.get(path);
         Log.info("estou aqui: 1");
-        File f = imageDir.getParent().toFile();
+        File f = imageDir.toFile();
         Log.info(String.valueOf(f.exists()));
 
         if (f.exists()) {
@@ -139,7 +141,7 @@ public class JavaImage implements Image {
             return Result.error(ErrorCode.BAD_REQUEST);
         }
 
-        Path imageDir = Paths.get("fctreddit/images/" + userId + "/" + imageId + ".jpg");
+        Path imageDir = Paths.get("fctreddit/image/" + userId + "/" + imageId + ".jpg");
 
 
         if (!Files.exists(imageDir)) {

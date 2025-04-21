@@ -18,6 +18,7 @@ public class ClientFactory {
     private static Discovery discovery;
     private static ClientFactory instance;
 
+
     //private static Logger Log = Logger.getLogger(ClientFactory.class.getName());
 
     private ClientFactory() throws IOException {
@@ -79,8 +80,8 @@ public class ClientFactory {
         }
     }
 
-    public URI getURIClient() throws IOException {
-        URI[] uris = discovery.knownUrisOf("Users", 1);
+    public URI getURIClient(String service) throws IOException {
+        URI[] uris = discovery.knownUrisOf(service, 1);
         return uris[0];
     }
 
