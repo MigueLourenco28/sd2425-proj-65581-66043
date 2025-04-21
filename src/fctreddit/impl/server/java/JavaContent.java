@@ -149,55 +149,7 @@ public class JavaContent implements Content {
 
     @Override
     public Result<Post> updatePost(String postId, String userPassword, Post post) {
-        Log.info("updatePost : post = " + postId + "; userPassword = " + userPassword + " ; postData = " + post);
-
-		if (postId == null || postId.isEmpty() ||
-			userPassword == null || userPassword.isEmpty() ||
-			post == null) { // Check if userId, password or user is null
-            Log.info("Invalid input.");
-            throw new WebApplicationException(Status.BAD_REQUEST);
-        }
-
-        Post existingPost = getPost(postId).value();
-
-		if(existingPost == null) {
-			Log.info("Post does not exist.");
-			throw new WebApplicationException(Status.NOT_FOUND);
-		}
-
-        URI[] userUri = discovery.knownUrisOf("Users", 1);
-        UsersClient userClient = new RestUsersClient(userUri[0]);
-        User author = userClient.getUser(existingPost.getAuthorId(), userPassword).value();
-
-		if(author == Result.error(ErrorCode.FORBIDDEN)) {
-			Log.info("Password is incorrect.");
-			throw new WebApplicationException(Status.FORBIDDEN);
-		}
-
-        if (post.getContent() != null) {
-            existingPost.setContent(post.getContent());
-        }
-
-        URI[] imageUri = discovery.knownUrisOf("Image", 1);
-        ImageClient imageClient = new RestImageClient(imageUri[0]);
-
-        if (post.getMediaUrl() != null) {
-            byte[] imageUrl = imageClient.getImage(existingPost.getAuthorId(), post.getMediaUrl()).value();//Check if the mediaUrl exists/has been created
-            if(imageUrl == Result.error(ErrorCode.NOT_FOUND).value()) {
-                Log.info("Image does not exist.");
-                throw new WebApplicationException(Status.NOT_FOUND);
-            }
-            existingPost.setMediaUrl(post.getMediaUrl());
-        }
-
-        try {
-            hibernate.update(existingPost); // Update the user in the database
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-        }
-
-        return Result.ok(existingPost);
+        return null;
     }
 
     @Override

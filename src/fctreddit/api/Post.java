@@ -1,5 +1,6 @@
 package fctreddit.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
@@ -18,6 +19,7 @@ public class Post {
 	private String parentUrl; //This should be null when this is a top level post.
 	private int upVote;
 	private int downVote;
+	@JsonIgnore
 	private int numReplies;
 
 
