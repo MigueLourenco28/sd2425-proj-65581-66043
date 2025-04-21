@@ -106,18 +106,24 @@ public class JavaImage implements Image {
     @Override
     public Result<byte[]> getImage(String userId, String imageId) {
 
-        Path imageDir = Paths.get("fctreddit/images/" + userId + "/" + imageId + ".jpg");
+        Log.info("Imagem recuperado: " + imageId);
+        Path imageDir = Paths.get("/home/sd/images/" + userId + File.separator + imageId + ".jpg");
+        Log.info("estou aqui: 1");
+        File f = imageDir.getParent().toFile();
+        Log.info(String.valueOf(f.exists()));
 
-
-        if (Files.exists(imageDir)) {
+        if (f.exists()) {
             try {
+                Log.info("estou aqui: 2");
                 byte[] imageData = Files.readAllBytes(imageDir);
+                Log.info("estou aqui: 3");
                 return Result.ok(imageData);
             } catch (IOException e) {
                 Log.severe("Error getting the  image: " + e.getMessage());
                 return Result.error(ErrorCode.INTERNAL_ERROR);
             }
         } else {
+            Log.info("estou aqui: 4");
             Log.info("The image with the id " + imageId + "and userId " +
                     userId + " does not exist.");
             return Result.error(ErrorCode.NOT_FOUND);
