@@ -141,32 +141,29 @@ public class JavaImage implements Image {
             return Result.error(ErrorCode.BAD_REQUEST);
         }
 
-        Path imageDir = Paths.get("fctreddit/image/" + userId + "/" + imageId + ".jpg");
-
-
-        if (!Files.exists(imageDir)) {
-            Log.info("Image doesn't exist: " + imageId);
-            return Result.error(ErrorCode.NOT_FOUND);
-        }
-
-        URI[] uri = discovery.knownUrisOf("Users", 1);
-        UsersClient client = new RestUsersClient(uri[0]);
-        User user = client.getUser(userId, password).value();
-
-        if (user == null) {
-            Log.info("User does not exist.");
-            return Result.error(ErrorCode.NOT_FOUND);
-        }
-
-        String pwd = user.getPassword();
-
-        if (!pwd.equals(password)) {
-            Log.info("Password is incorrect.");
-            return Result.error(ErrorCode.FORBIDDEN);
+        Result<byte[]> imageResult = getImage(userId, imageId);
+        if(!imageResult.isOK()) {
+            Log.warning("Image doesn't exist");
+            return Result.error(imageResult.error());
         }
 
         try {
-            Files.delete(imageDir);
+            ClientFactory clientFactory = ClientFactory.getInstance();
+            Users client = clientFactory.getUserClient();
+            Result<User> userResult = client.getUser(userId, password);
+            if (!userResult.isOK()) {
+                Log.warning("User not authenticated: " + userResult.error());
+                return Result.error(userResult.error());
+            }
+        } catch (IOException e) {
+            return Result.error(ErrorCode.NOT_FOUND);
+        }
+
+        String imagePath = "/home/sd/image/" + userId + File.separator + imageId;
+        Path path = Paths.get(imagePath);
+
+        try {
+            Files.delete(path);
             Log.info("Image deleted successfully: " + imageId);
         } catch (IOException e) {
             Log.severe("Error deleting image: " + e.getMessage());
