@@ -42,7 +42,8 @@ public class JavaImage implements Image {
             Log.info("Image or password null.");
             return Result.error(ErrorCode.BAD_REQUEST);
         }
-        User user = null;
+
+        User user;
         String URI;
         try {
             ClientFactory clientFactory = ClientFactory.getInstance();
@@ -57,40 +58,30 @@ public class JavaImage implements Image {
 
         } catch (IOException e) {
             return Result.error(ErrorCode.NOT_FOUND);
-        }// Checks if user exists and if password is correct
+        }
 
         String imageId = UUID.randomUUID().toString();
 
         Path baseDir = Paths.get("/home/sd/image");
 
         try {
-
             if (!Files.exists(baseDir)) {
-
                 Files.createDirectories(baseDir);
-
-                Log.info("Diretório criado: " + baseDir.toString());
             }
         } catch (IOException e) {
-
-            Log.severe("Erro ao verificar/criar diretório base: " + e.getMessage());
             return Result.error(ErrorCode.INTERNAL_ERROR);
         }
+
         String userPath = baseDir.toString() + File.separator + userId;
         String imagePath = userPath + File.separator + (imageId + ".jpg");
         Path path = Paths.get(imagePath);
 
         try {
-
             File f = path.getParent().toFile();
             if (!f.exists()) {
-
-                f.mkdirs();
-                Log.info("Diretório do utilizador criado: " + f.getAbsolutePath());
+                f.mkdirs(); // Create the directory if it doesn't exist
             }
             Files.write(path, imageContents);
-
-            Log.info("Imagem salva em: " + imagePath);
         } catch (IOException e) {
             e.printStackTrace();
             Log.severe("Error saving image: " + e.getMessage());
@@ -106,25 +97,19 @@ public class JavaImage implements Image {
     @Override
     public Result<byte[]> getImage(String userId, String imageId) {
 
-        Log.info("Imagem recuperado: " + imageId);
         String path ="/home/sd/image/" + userId + File.separator + imageId;
         Path imageDir = Paths.get(path);
-        Log.info("estou aqui: 1");
         File f = imageDir.toFile();
-        Log.info(String.valueOf(f.exists()));
 
         if (f.exists()) {
             try {
-                Log.info("estou aqui: 2");
                 byte[] imageData = Files.readAllBytes(imageDir);
-                Log.info("estou aqui: 3");
                 return Result.ok(imageData);
             } catch (IOException e) {
                 Log.severe("Error getting the  image: " + e.getMessage());
                 return Result.error(ErrorCode.INTERNAL_ERROR);
             }
         } else {
-            Log.info("estou aqui: 4");
             Log.info("The image with the id " + imageId + "and userId " +
                     userId + " does not exist.");
             return Result.error(ErrorCode.NOT_FOUND);

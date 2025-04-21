@@ -154,7 +154,59 @@ public class JavaContent implements Content {
 
     @Override
     public Result<Post> updatePost(String postId, String userPassword, Post post) {
-        return null;
+        Log.info("updatePost : post = " + postId + "; userPassword = " + userPassword + " ; postData = " + post);
+
+		if (postId == null || postId.isEmpty() ||
+			userPassword == null || userPassword.isEmpty() ||
+			post == null) { // Check if userId, password or user is null
+            Log.info("Invalid input.");
+            throw new WebApplicationException(Status.BAD_REQUEST);
+        }
+
+        Post existingPost = getPost(postId).value();
+
+		if(existingPost == null) {
+			Log.info("Post does not exist.");
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+
+        try {
+            ClientFactory clientFactory = ClientFactory.getInstance();
+            Users userClient = clientFactory.getUserClient();
+            Result<User> userResult = userClient.getUser(post.getAuthorId(), userPassword);
+            if (!userResult.isOK()) {
+                Log.warning("User not authenticated: " + userResult.error());
+                return Result.error(userResult.error());
+            }
+        } catch (IOException e) {
+            return Result.error(ErrorCode.NOT_FOUND);
+        }
+
+        if (post.getContent() != null) {
+            existingPost.setContent(post.getContent());
+        }
+
+        try {
+            ClientFactory clientFactory = ClientFactory.getInstance();
+            Image imageClient = clientFactory.getImageClient();
+            Result<byte[]> imageResult = imageClient.getImage(existingPost.getAuthorId(), post.getMediaUrl()); //Check if the mediaUrl exists/has been created
+            if (!imageResult.isOK()) {
+                Log.warning("Image not authenticated: " + imageResult.error());
+                return Result.error(imageResult.error());
+            }
+            existingPost.setMediaUrl(post.getMediaUrl()); // Update the mediaUrl with the new one (knwn that it exists)
+        } catch (IOException e) {
+            return Result.error(ErrorCode.NOT_FOUND);
+        }
+
+        try {
+            hibernate.update(existingPost); // Update the user in the database
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+        }
+
+        return Result.ok(existingPost);
     }
 
     @Override
