@@ -51,40 +51,45 @@ public class JavaImage implements Image {
             }
             user = userResult.value();
             URI = clientFactory.getURIClient().toString();
-        } catch (Exception e) {
+
+        } catch (IOException e) {
             return Result.error(ErrorCode.NOT_FOUND);
         }// Checks if user exists and if password is correct
 
 
-        if (user == null) {
-            Log.info("User not found.");
-            return Result.error(ErrorCode.NOT_FOUND);
-        }
-        String imageId = UUID.randomUUID().toString();
 
+        String imageId = UUID.randomUUID().toString();
 
 
         Path baseDir = Paths.get("/home/sd/images");
 
         try {
+
             if (!Files.exists(baseDir)) {
+
                 Files.createDirectories(baseDir);
+
                 Log.info("Diretório criado: " + baseDir.toString());
             }
         } catch (IOException e) {
+
             Log.severe("Erro ao verificar/criar diretório base: " + e.getMessage());
             return Result.error(ErrorCode.INTERNAL_ERROR);
         }
-        Path userPath = baseDir.resolve(userId);
-        Path imagePath = userPath.resolve(imageId + ".jpg");
+        String userPath = baseDir.toString() + File.separator + userId;
+        String imagePath = userPath + File.separator + (imageId + ".jpg");
+        Path path = Paths.get(imagePath);
 
         try {
-            File f = imagePath.getParent().toFile();
+
+            File f = path.getParent().toFile();
             if (!f.exists()) {
+
                 f.mkdirs();
                 Log.info("Diretório do utilizador criado: " + f.getAbsolutePath());
             }
-            Files.write(imagePath, imageContents);
+            Files.write(path, imageContents);
+
             Log.info("Imagem salva em: " + imagePath);
         } catch (IOException e) {
             e.printStackTrace();
@@ -93,6 +98,7 @@ public class JavaImage implements Image {
         }
 
         String imageUrl = String.format("%s/images/%s/%s.jpg", URI, user.getUserId(), imageId);
+
 
         return Result.ok(imageUrl);
     }

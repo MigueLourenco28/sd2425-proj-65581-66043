@@ -3,6 +3,7 @@ package fctreddit.clients.rest.UserClients;
 import java.net.URI;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 
 import fctreddit.clients.java.UsersClient;
@@ -31,6 +32,7 @@ public class RestUsersClient extends UsersClient  {
 	protected static final int MAX_RETRIES = 10;
 	protected static final int RETRY_SLEEP = 5000;
 
+	private static Logger Log = Logger.getLogger(RestUsersClient.class.getName());
 	
 	final URI serverURI;
 	final Client client;
@@ -39,10 +41,11 @@ public class RestUsersClient extends UsersClient  {
 	final WebTarget target;
 	
 	public RestUsersClient( URI serverURI ) {
+
 		this.serverURI = serverURI;
 
 		this.config = new ClientConfig();
-		
+
 		config.property( ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
 		config.property( ClientProperties.CONNECT_TIMEOUT, CONNECT_TIMEOUT);
 
@@ -53,7 +56,6 @@ public class RestUsersClient extends UsersClient  {
 	}
 
 	public Result<String> createUser(User user) {
-
 		Response r = executeOperationsPost(target.request().accept(MediaType.APPLICATION_JSON),
 				Entity.entity(user, MediaType.APPLICATION_JSON));
 
@@ -70,7 +72,6 @@ public class RestUsersClient extends UsersClient  {
 	}
 
 	public Result<User> getUser(String userId, String pwd) {
-
 		Response r = executeOperationsGet(target.path( userId ).queryParam(RestUsers.PASSWORD, pwd).request()
 				.accept(MediaType.APPLICATION_JSON));
 
@@ -82,6 +83,7 @@ public class RestUsersClient extends UsersClient  {
 		if(status != Status.OK.getStatusCode()){
 			return Result.error(getErrorCodeFrom(status));
 		}else{
+
 			return Result.ok(r.readEntity(User.class));
 		}
 	}

@@ -11,11 +11,14 @@ import fctreddit.clients.rest.UserClients.RestUsersClient;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.logging.Logger;
 
 public class ClientFactory {
 
     private static Discovery discovery;
     private static ClientFactory instance;
+
+    //private static Logger Log = Logger.getLogger(ClientFactory.class.getName());
 
     private ClientFactory() throws IOException {
         discovery = new Discovery(Discovery.DISCOVERY_ADDR);
@@ -23,21 +26,29 @@ public class ClientFactory {
     }
 
     public static ClientFactory getInstance() throws IOException {
-        if(instance == null) {
+        if (instance == null) {
             instance = new ClientFactory();
         }
         return instance;
     }
 
     public Users getUserClient() throws IOException {
-        URI[] uris = discovery.knownUrisOf("Users", 1);
-        String[] splitUri = uris[0].toString().split("/");
+        String[] splitUri;
+        URI[] uris;
+        try {
+            uris = discovery.knownUrisOf("Users", 1);
+            splitUri = uris[0].toString().split("/");
+        } catch (Exception e) {
+            //Log.info(e.getMessage());
+            throw new IOException(e);
+        }
 
-        if(splitUri[3].equals("rest")){
+
+        if (splitUri[3].equals("rest")) {
             return new RestUsersClient(uris[0]);
-        }else if (splitUri[3].equals("grpc")){
+        } else if (splitUri[3].equals("grpc")) {
             return null;
-        }else{
+        } else {
             throw new IOException("Not supported yet.");
         }
     }
@@ -46,11 +57,11 @@ public class ClientFactory {
         URI[] uris = discovery.knownUrisOf("Image", 1);
         String[] splitUri = uris[0].toString().split("/");
 
-        if(splitUri[2].equals("rest")){
+        if (splitUri[2].equals("rest")) {
             return new RestImageClient(uris[0]);
-        }else if (splitUri[2].equals("grpc")){
+        } else if (splitUri[2].equals("grpc")) {
             return null;
-        }else{
+        } else {
             throw new IOException("Not supported yet.");
         }
     }
@@ -59,17 +70,17 @@ public class ClientFactory {
         URI[] uris = discovery.knownUrisOf("Content", 1);
         String[] splitUri = uris[0].toString().split("/");
 
-        if(splitUri[2].equals("rest")){
+        if (splitUri[2].equals("rest")) {
             return new RestContentClient(uris[0]);
-        }else if (splitUri[2].equals("grpc")){
+        } else if (splitUri[2].equals("grpc")) {
             return null;
-        }else{
+        } else {
             throw new IOException("Not supported yet.");
         }
     }
 
     public URI getURIClient() throws IOException {
-        URI[] uris = discovery.knownUrisOf("URI", 1);
+        URI[] uris = discovery.knownUrisOf("Users", 1);
         return uris[0];
     }
 
