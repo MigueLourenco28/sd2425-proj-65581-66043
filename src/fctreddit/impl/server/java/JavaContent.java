@@ -146,7 +146,7 @@ public class JavaContent implements Content {
             //temos de adicionar um wait mas nao sei como se faz.
             return null;
         }else{
-            List<String> responses = hibernate.jpql("SELECT u.postId FROM Post u WHERE u.mediaUrl LIKE '%" + postId +"%'", String.class);
+            List<String> responses = hibernate.jpql("SELECT u.postId FROM Post u WHERE u.parentUrl LIKE '%" + postId +"%'", String.class);
         return Result.ok(responses);
         }
 
