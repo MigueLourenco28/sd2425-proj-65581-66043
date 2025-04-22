@@ -1,15 +1,16 @@
 package fctreddit.api;
 
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
-import java.io.Serializable;
 
 @Entity
-public class Votes implements Serializable {
+public class Votes  {
 
-    @EmbeddedId
-    private VotesId votesId;
+    @Id
+    private String userId;
+    @Id
+    private String postId;
     private String type;
 
 
@@ -17,7 +18,8 @@ public class Votes implements Serializable {
     }
 
     public Votes(String userId, String postId) {
-        this.votesId = new VotesId(userId, postId);
+        this.userId = userId;
+        this.postId = postId;
     }
 
     public Votes(String userId, String postId,String type) {
@@ -27,20 +29,16 @@ public class Votes implements Serializable {
 
     // Getters e Setters
     public String getUserId() {
-        return votesId.getUserId();
+        return userId;
     }
 
-    public void setUserId(String userId) {
-        votesId.setUserId(userId);
-    }
+    public void setUserId(String userId) {this.userId = userId;}
 
     public String getPostId() {
-        return votesId.getPostId();
+        return postId;
     }
 
-    public void setPostId(String postId) {
-        votesId.setPostId(postId);
-    }
+    public void setPostId(String postId) { this.postId = postId; }
 
     public String getType() {
         return type;

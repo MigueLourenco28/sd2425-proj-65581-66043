@@ -59,13 +59,13 @@ public class JavaContent implements Content {
             return Result.error(ErrorCode.NOT_FOUND);
         }
 
-        if (post.getParentUrl() != null){
+        if (post.getParentUrl() != null) {
             String[] splits = post.getParentUrl().split("/");
             String parentId = splits[splits.length - 1];
 
             Post parent = hibernate.get(Post.class, parentId);
 
-            if(parent == null) {
+            if (parent == null) {
                 Log.info("Post " + post.getAuthorId() + " not found");
                 return Result.error(Result.ErrorCode.NOT_FOUND);
             }
@@ -93,21 +93,21 @@ public class JavaContent implements Content {
 
         String query = "SELECT u.postId FROM Post u WHERE u.parentUrl IS NULL";
 
-        if(timestamp > 0){
-            query += " AND u.creationTimestamp >= '%" + timestamp +"%'";
+        if (timestamp > 0) {
+            query += " AND u.creationTimestamp >= '%" + timestamp + "%'";
         }
 
-        if(sortOrder != null){
-            if(sortOrder.equals("MOST_UP_VOTES")){
+        if (sortOrder != null) {
+            if (sortOrder.equals("MOST_UP_VOTES")) {
                 query += " ORDER BY u.upVote DESC, u.postId ASC";
-            }else if(sortOrder.equals("MOST_REPLIES")){
+            } else if (sortOrder.equals("MOST_REPLIES")) {
                 query += " ORDER BY u.numReplies DESC, u.postId ASC";
             }
         }
         try {
             List<String> posts = hibernate.jpql(query, String.class);
             return Result.ok(posts);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
     }
@@ -116,27 +116,27 @@ public class JavaContent implements Content {
     public Result<Post> getPost(String postId) {
         Log.info("getPost : post = " + postId);
 
-		// Check if the post is valid
-		if (postId == null || postId.isEmpty()) {
-			Log.info("PostId null.");
+        // Check if the post is valid
+        if (postId == null || postId.isEmpty()) {
+            Log.info("PostId null.");
             return Result.error(ErrorCode.FORBIDDEN);
-		}
+        }
 
-		Post post = null;
-		try {
-			post = hibernate.get(Post.class, postId);
-		} catch (Exception e) {
-			e.printStackTrace();
+        Post post = null;
+        try {
+            post = hibernate.get(Post.class, postId);
+        } catch (Exception e) {
+            e.printStackTrace();
             return Result.error(ErrorCode.NOT_FOUND);
-		}
+        }
 
-		// Check if user exists
-		if (post == null) {
-			Log.info("Post does not exist.");
+        // Check if user exists
+        if (post == null) {
+            Log.info("Post does not exist.");
             return Result.error(ErrorCode.NOT_FOUND);
-		}
+        }
 
-		return Result.ok(post);
+        return Result.ok(post);
     }
 
     @Override
@@ -145,12 +145,12 @@ public class JavaContent implements Content {
 
         Post post = getPost(postId).value();
 
-        if(maxTimeout > 0){
+        if (maxTimeout > 0) {
             //temos de adicionar um wait mas nao sei como se faz.
             return null;
-        }else{
-            List<String> responses = hibernate.jpql("SELECT u.postId FROM Post u WHERE u.parentUrl LIKE '%" + postId +"%'", String.class);
-        return Result.ok(responses);
+        } else {
+            List<String> responses = hibernate.jpql("SELECT u.postId FROM Post u WHERE u.parentUrl LIKE '%" + postId + "%'", String.class);
+            return Result.ok(responses);
         }
 
     }
@@ -159,19 +159,19 @@ public class JavaContent implements Content {
     public Result<Post> updatePost(String postId, String userPassword, Post post) {
         Log.info("updatePost : post = " + postId + "; userPassword = " + userPassword + " ; postData = " + post);
 
-		if (postId == null || postId.isEmpty() ||
-			userPassword == null || userPassword.isEmpty() ||
-			post == null) { // Check if userId, password or user is null
+        if (postId == null || postId.isEmpty() ||
+                userPassword == null || userPassword.isEmpty() ||
+                post == null) { // Check if userId, password or user is null
             Log.info("Invalid input.");
             throw new WebApplicationException(Status.BAD_REQUEST);
         }
 
         Post existingPost = getPost(postId).value();
 
-		if(existingPost == null) {
-			Log.info("Post does not exist.");
-			throw new WebApplicationException(Status.NOT_FOUND);
-		}
+        if (existingPost == null) {
+            Log.info("Post does not exist.");
+            throw new WebApplicationException(Status.NOT_FOUND);
+        }
 
         try {
             ClientFactory clientFactory = ClientFactory.getInstance();
@@ -216,20 +216,20 @@ public class JavaContent implements Content {
     public Result<Void> deletePost(String postId, String userPassword) {
         // TODO Auto-generated method stub
 
-       Post post = getPost(postId).value();
+        Post post = getPost(postId).value();
         try {
             ClientFactory clientFactory = ClientFactory.getInstance();
             Users userClient = clientFactory.getUserClient();
             userClient.getUser(post.getAuthorId(), userPassword).value();
             Image imageClient = clientFactory.getImageClient();
-            if(post.getMediaUrl() != null) {
+            if (post.getMediaUrl() != null) {
                 String[] split = post.getMediaUrl().split("/");
                 String[] split2 = split[6].split("//.");
                 String imageId = split2[0];
-                imageClient.deleteImage(post.getAuthorId(),imageId, userPassword);
+                imageClient.deleteImage(post.getAuthorId(), imageId, userPassword);
             }
             //adicionar o remover posts q deram a resposta ao post principal em cascata
-            List<String> replies = getPostAnswers(postId,100000).value();
+            List<String> replies = getPostAnswers(postId, 100000).value();
             deleteCascade(replies);
             hibernate.delete(post);
             return Result.ok(null);
@@ -240,11 +240,11 @@ public class JavaContent implements Content {
 
     }
 
-    private void deleteCascade(List<String> repliesIds){
-        for(String reply : repliesIds){
+    private void deleteCascade(List<String> repliesIds) {
+        for (String reply : repliesIds) {
             Post post = getPost(reply).value();
             hibernate.delete(post);
-            if(!getPostAnswers(reply, 100000).value().isEmpty()){
+            if (!getPostAnswers(reply, 100000).value().isEmpty()) {
                 deleteCascade(getPostAnswers(reply, 100000).value());
             }
         }
@@ -254,7 +254,7 @@ public class JavaContent implements Content {
     public Result<Void> upVotePost(String postId, String userId, String userPassword) {
         Post post;
         Result<Post> postResult = getPost(postId);
-        if(!postResult.isOK()){
+        if (!postResult.isOK()) {
             Log.info("Post not authenticated: " + postId);
             return Result.error(postResult.error());
         }
@@ -269,28 +269,40 @@ public class JavaContent implements Content {
                 Log.warning("User not authenticated: " + userResult.error());
                 return Result.error(userResult.error());
             }
-
         } catch (IOException e) {
-            return Result.error(ErrorCode.NOT_FOUND);
+            return Result.error(ErrorCode.INTERNAL_ERROR);
         }
 
-        try{
-            Votes vote = new Votes(userId, postId,UP);
-            hibernate.persist(Votes.class, vote);
-            post.setUpVote(post.getUpVote()+1);
-            hibernate.update(Post.class, post);
+        try {
+            Votes vote = new Votes(userId, postId, UP);
+            Log.info(vote.getPostId() + "     " + vote.getUserId() + "       " + vote.getType());
+            hibernate.persist(vote);
+        } catch (Exception e) {
+            Log.info(e.getMessage());
+            return Result.error(ErrorCode.CONFLICT);
+        }
+
+        int x = post.getUpVote() + 1;
+        post.setUpVote(x);
+
+        try {
+            hibernate.update(post);
+            Log.info("VoteValue: " + post.getUpVote());
             return Result.ok(null);
-        }catch (Exception e) {
+        } catch (Exception e) {
+            Log.info(e.getMessage());
             return Result.error(ErrorCode.CONFLICT);
 
         }
+
+
     }
 
     @Override
     public Result<Void> removeUpVotePost(String postId, String userId, String userPassword) {
         Post post;
         Result<Post> postResult = getPost(postId);
-        if(!postResult.isOK()){
+        if (!postResult.isOK()) {
             Log.info("Post not authenticated: " + postId);
             return Result.error(postResult.error());
         }
@@ -310,18 +322,29 @@ public class JavaContent implements Content {
             return Result.error(ErrorCode.NOT_FOUND);
         }
 
-
-        try{
-            Votes votes = hibernate.get(Votes.class, new Votes(userId,postId));
-            if(!votes.getType().equals(UP)) {
+        Votes votes;
+        try {
+            Votes vote = new Votes(userId, postId);
+            votes = hibernate.get(Votes.class, vote);
+            if (!votes.getType().equals(UP)) {
                 Log.warning("User did not vote up: " + postId);
                 return Result.error(ErrorCode.CONFLICT);
             }
+        } catch (Exception d) {
+            return Result.error(ErrorCode.INTERNAL_ERROR);
+        }
+
+        try{
             hibernate.delete(votes);
-            post.setUpVote(post.getUpVote()-1);
+        }catch(Exception e){
+            return Result.error(ErrorCode.INTERNAL_ERROR);
+        }
+        int x = post.getUpVote() - 1;
+        post.setUpVote(x);
+        try{
             hibernate.update(Post.class, post);
             return Result.ok(null);
-        }catch (Exception d) {
+        } catch (Exception d) {
             return Result.error(ErrorCode.INTERNAL_ERROR);
 
         }
@@ -333,7 +356,7 @@ public class JavaContent implements Content {
     public Result<Void> downVotePost(String postId, String userId, String userPassword) {
         Post post;
         Result<Post> postResult = getPost(postId);
-        if(!postResult.isOK()){
+        if (!postResult.isOK()) {
             Log.info("Post not authenticated: " + postId);
             return Result.error(postResult.error());
         }
@@ -348,23 +371,27 @@ public class JavaContent implements Content {
                 Log.warning("User not authenticated: " + userResult.error());
                 return Result.error(userResult.error());
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             return Result.error(ErrorCode.INTERNAL_ERROR);
         }
 
-        try{
-            Log.info("Aqui 1");
-            Votes vote = new Votes(userId,postId,DOWN);
-            Log.info("MERDA");
-            hibernate.persist(Votes.class,vote);
-            Log.info("Aqui 2");
-            post.setUpVote(post.getDownVote()+1);
-            Log.info("Aqui 3");
-            hibernate.update(Post.class, post);
-            Log.info("Aqui 4");
+        try {
+            Votes vote = new Votes(userId, postId, DOWN);
+            Log.info(vote.getPostId() + "     " + vote.getUserId() + "       " + vote.getType());
+            hibernate.persist(vote);
+        } catch (Exception e) {
+            Log.info(e.getMessage());
+            return Result.error(ErrorCode.CONFLICT);
+        }
+
+        int x = post.getDownVote() + 1;
+        post.setDownVote(x);
+        try {
+            hibernate.update(post);
+            Log.info("VoteValue: " + post.getUpVote());
             return Result.ok(null);
-        }catch (Exception e) {
-            Log.info("merda");
+        } catch (Exception e) {
+            Log.info(e.getMessage());
             return Result.error(ErrorCode.CONFLICT);
 
         }
@@ -376,7 +403,7 @@ public class JavaContent implements Content {
     public Result<Void> removeDownVotePost(String postId, String userId, String userPassword) {
         Post post;
         Result<Post> postResult = getPost(postId);
-        if(!postResult.isOK()){
+        if (!postResult.isOK()) {
             Log.info("Post not authenticated: " + postId);
             return Result.error(postResult.error());
         }
@@ -392,38 +419,70 @@ public class JavaContent implements Content {
                 return Result.error(userResult.error());
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             return Result.error(ErrorCode.NOT_FOUND);
         }
 
-
-        try{
-            Votes votes = hibernate.get(Votes.class, new Votes(userId,postId));
-            if(!votes.getType().equals(DOWN)) {
+        Votes votes;
+        try {
+            Votes vote = new Votes(userId, postId);
+            votes = hibernate.get(Votes.class, vote);
+            if (!votes.getType().equals(DOWN)) {
                 Log.warning("User did not vote up: " + postId);
                 return Result.error(ErrorCode.CONFLICT);
             }
+        } catch (Exception e) {
+            return Result.error(ErrorCode.INTERNAL_ERROR);
+        }
+
+        try{
             hibernate.delete(votes);
-            post.setUpVote(post.getDownVote()-1);
-            hibernate.update(Post.class, post);
+        }catch(Exception e){
+            return Result.error(ErrorCode.INTERNAL_ERROR);
+        }
+        int x = post.getDownVote() - 1;
+        post.setDownVote(x);
+        try{
+            hibernate.update(post);
             return Result.ok(null);
-        }catch (Exception d) {
+        } catch (Exception e) {
             return Result.error(ErrorCode.INTERNAL_ERROR);
 
         }
+
+
 
     }
 
     @Override
     public Result<Integer> getupVotes(String postId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getupVotes'");
+        Post post;
+        try {
+            post = hibernate.get(Post.class, postId);
+        }catch (Exception e){
+            Log.warning(e.getMessage());
+            return Result.error(ErrorCode.NOT_FOUND);
+        }
+
+        int votes = post.getUpVote();
+
+        Log.info("valor: " + post.getUpVote());
+        return Result.ok(votes);
     }
 
     @Override
     public Result<Integer> getDownVotes(String postId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDownVotes'");
+        Post post;
+        try {
+            post = hibernate.get(Post.class, postId);
+        }catch (Exception e){
+            Log.warning(e.getMessage());
+            return Result.error(ErrorCode.NOT_FOUND);
+        }
+
+        int votes = post.getDownVote();
+        Log.info("valor: " + post.getDownVote());
+        return Result.ok(votes);
     }
 
 }
