@@ -176,7 +176,7 @@ public class JavaContent implements Content {
         try {
             ClientFactory clientFactory = ClientFactory.getInstance();
             Users userClient = clientFactory.getUserClient();
-            Result<User> userResult = userClient.getUser(post.getAuthorId(), userPassword);
+            Result<User> userResult = userClient.getUser(post.getAuthorId(), userPassword); // <---- ERROR
             if (!userResult.isOK()) {
                 Log.warning("User not authenticated: " + userResult.error());
                 return Result.error(userResult.error());
