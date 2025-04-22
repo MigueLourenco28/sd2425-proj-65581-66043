@@ -1,9 +1,12 @@
 package fctreddit.impl.server.grpc;
 
+import fctreddit.api.User;
 import fctreddit.api.java.Image;
 import fctreddit.api.java.Result;
 import fctreddit.impl.grpc.generated_java.ImageGrpc;
 import fctreddit.impl.grpc.generated_java.ImageProtoBuf.*;
+import fctreddit.impl.grpc.generated_java.UsersProtoBuf.GetUserResult;
+import fctreddit.impl.grpc.util.UserDataModelAdaptor;
 import io.grpc.stub.StreamObserver;
 import fctreddit.impl.server.java.JavaImage;
 import io.grpc.BindableService;
@@ -20,8 +23,17 @@ public class GrpcImageServerStub implements ImageGrpc.AsyncService, BindableServ
 
     @Override
     public void createImage(CreateImageArgs request, StreamObserver<CreateImageResult> responseObserver) {
+        /**
+        Result<String> res = impl.createImage(request.getUserId(), request.getImageContents().toByteArray(), request.getPassword());
+		if( ! res.isOK() )
+			responseObserver.onError(errorCodeToStatus(res.error()));
+		else {
+			responseObserver.onNext( CreateImageResult.newBuilder().setImageId(res.value())).build();
+			responseObserver.onCompleted();
+		}
+        */
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createImage'");
+        throw new UnsupportedOperationException("Unimplemented method 'getImage'");
     }
 
     @Override

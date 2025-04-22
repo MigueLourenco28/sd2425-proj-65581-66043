@@ -16,7 +16,7 @@ import fctreddit.api.User;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
 import fctreddit.clients.java.UsersClient;
-import fctreddit.impl.grpc.util.DataModelAdaptor;
+import fctreddit.impl.grpc.util.UserDataModelAdaptor;
 import fctreddit.impl.grpc.generated_java.UsersGrpc;
 import fctreddit.impl.grpc.generated_java.UsersProtoBuf.CreateUserArgs;
 import fctreddit.impl.grpc.generated_java.UsersProtoBuf.CreateUserResult;
@@ -42,7 +42,7 @@ public class GrpcUsersClient extends UsersClient {
 	public Result<String> createUser(User user) {		
 		try {
 			CreateUserResult res = stub.createUser(CreateUserArgs.newBuilder()
-					.setUser(DataModelAdaptor.User_to_GrpcUser(user))
+					.setUser(UserDataModelAdaptor.User_to_GrpcUser(user))
 					.build());
 			
 			return Result.ok(res.getUserId());
@@ -58,7 +58,7 @@ public class GrpcUsersClient extends UsersClient {
 					.setUserId(userId).setPassword(password)
 					.build());
 			
-			return Result.ok(DataModelAdaptor.GrpcUser_to_User(res.getUser()));
+			return Result.ok(UserDataModelAdaptor.GrpcUser_to_User(res.getUser()));
 		} catch (StatusRuntimeException sre) {
 			return Result.error( statusToErrorCode(sre.getStatus()));
 		}
@@ -83,7 +83,7 @@ public class GrpcUsersClient extends UsersClient {
 			
 			List<User> ret = new ArrayList<User>();
 			while(res.hasNext()) {
-				ret.add(DataModelAdaptor.GrpcUser_to_User(res.next()));
+				ret.add(UserDataModelAdaptor.GrpcUser_to_User(res.next()));
 			}
 			return Result.ok(ret);
 		} catch (StatusRuntimeException sre) {
