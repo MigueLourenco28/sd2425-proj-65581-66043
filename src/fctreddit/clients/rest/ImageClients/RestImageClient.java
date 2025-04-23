@@ -1,6 +1,7 @@
 package fctreddit.clients.rest.ImageClients;
 
 import fctreddit.api.java.Result;
+import fctreddit.api.rest.RestImage;
 import fctreddit.api.rest.RestUsers;
 import fctreddit.clients.java.ImageClient;
 import jakarta.ws.rs.client.Client;
@@ -37,13 +38,13 @@ public class RestImageClient extends ImageClient {
 
         this.client = ClientBuilder.newClient(config);
 
-        target = client.target( serverURI ).path( RestUsers.PATH );
+        target = client.target( serverURI ).path( RestImage.PATH );
     }
 
 
     @Override
     public Result<String> createImage(String userId, byte[] imageContents, String password) {
-        Response r = executeOperationsPost(target.path( userId ).queryParam(RestUsers.PASSWORD, password).request()
+        Response r = executeOperationsPost(target.path( userId ).queryParam(RestImage.PASSWORD, password).request()
                 .accept(MediaType.APPLICATION_JSON), Entity.entity(imageContents, MediaType.APPLICATION_OCTET_STREAM));
 
         if(r == null){
@@ -60,7 +61,7 @@ public class RestImageClient extends ImageClient {
 
     @Override
     public Result<byte[]> getImage(String userId, String imageId) {
-        Response r = executeOperationsGet(target.path( userId ).queryParam(RestUsers.AVATAR,imageId).request()
+        Response r = executeOperationsGet(target.path( userId ).path(imageId).request()
                 .accept(MediaType.APPLICATION_OCTET_STREAM));
 
         if(r == null){
@@ -77,7 +78,7 @@ public class RestImageClient extends ImageClient {
 
     @Override
     public Result<Void> deleteImage(String userId, String imageId, String password) {
-        Response r = executeOperationsDelete(target.path( userId ).queryParam(RestUsers.PASSWORD, password).queryParam(RestUsers.AVATAR,imageId)
+        Response r = executeOperationsDelete(target.path( userId ).path(imageId).queryParam(RestImage.PASSWORD, password)
                 .request().accept(MediaType.APPLICATION_JSON));
 
 

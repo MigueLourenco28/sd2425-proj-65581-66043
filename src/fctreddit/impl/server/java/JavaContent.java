@@ -231,8 +231,14 @@ public class JavaContent implements Content {
             userClient.getUser(post.getAuthorId(), userPassword).value();
             Image imageClient = clientFactory.getImageClient();
             if (post.getMediaUrl() != null) {
+                Log.info("Post has media url: " + post.getMediaUrl());
                 String[] split = post.getMediaUrl().split("/");
                 String imageId = split[split.length - 1];
+                Log.info("Image id: " + imageId);
+                Log.info("Post author: " + post.getAuthorId());
+                Log.info("Image author: " + split[split.length - 2]);
+                Result<Void> xpto = imageClient.deleteImage(post.getAuthorId(), imageId,userPassword);
+                Log.info("Erro aqui: " + xpto.error().toString());
                 imageClient.deleteImage(post.getAuthorId(), imageId, userPassword);
             }
             //adicionar o remover posts q deram a resposta ao post principal em cascata
