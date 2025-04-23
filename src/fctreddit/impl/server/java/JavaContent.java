@@ -175,6 +175,18 @@ public class JavaContent implements Content {
         existingPost = postResult.value();
 
 
+        List<String> posts = hibernate.jpql("SELECT u.postId FROM Post u WHERE u.parentUrl LIKE '%" + postId + "%'", String.class);
+
+        if (!posts.isEmpty()) {
+            Log.info("Post already has replies.");
+            return Result.error(Result.ErrorCode.BAD_REQUEST);
+        }
+        if (post.getUpVote() > 0 || post.getDownVote() > 0) {
+            Log.info("Post has up votes and/or down votes.");
+            return Result.error(Result.ErrorCode.BAD_REQUEST);
+        }
+
+
         try {
             ClientFactory clientFactory = ClientFactory.getInstance();
             Users userClient = clientFactory.getUserClient();
@@ -187,29 +199,13 @@ public class JavaContent implements Content {
             return Result.error(ErrorCode.INTERNAL_ERROR);
         }
 
+
         if (post.getContent() != null) {
             existingPost.setContent(post.getContent());
         }
 
-        try {
-            ClientFactory clientFactory = ClientFactory.getInstance();
-            Image imageClient = clientFactory.getImageClient();
-            String[] splits = post.getMediaUrl().split("/");
-            String imageId = splits[splits.length - 1];
-            String userId = splits[splits.length - 2];
-            Result<byte[]> imageResult = imageClient.getImage(userId, imageId); //Check if the mediaUrl exists/has been created
-            if (!imageResult.isOK()) {
-                Log.warning("Image not authenticated: " + imageResult.error());
-                return Result.error(imageResult.error());
-            }
-            Log.info("Aqui 6");
-            existingPost.setMediaUrl(post.getMediaUrl());
-            Log.info("Aqui 7");// Update the mediaUrl with the new one (knwn that it exists)
-        } catch (IOException e) {
-            Log.info("MERDA");
-            return Result.error(ErrorCode.BAD_REQUEST);
-        }
 
+        existingPost.setMediaUrl(post.getMediaUrl());
         try {
             hibernate.update(existingPost); // Update the user in the database
         } catch (Exception e) {
@@ -223,7 +219,12 @@ public class JavaContent implements Content {
     public Result<Void> deletePost(String postId, String userPassword) {
         // TODO Auto-generated method stub
 
-        Post post = getPost(postId).value();
+        Result<Post> response  = getPost(postId);
+        if(!response.isOK()) {
+            Log.info("Post not authenticated: " + postId);
+            return Result.error(response.error());
+        }
+        Post post = response.value();
         try {
             ClientFactory clientFactory = ClientFactory.getInstance();
             Users userClient = clientFactory.getUserClient();
@@ -231,12 +232,11 @@ public class JavaContent implements Content {
             Image imageClient = clientFactory.getImageClient();
             if (post.getMediaUrl() != null) {
                 String[] split = post.getMediaUrl().split("/");
-                String[] split2 = split[6].split("//.");
-                String imageId = split2[0];
+                String imageId = split[split.length - 1];
                 imageClient.deleteImage(post.getAuthorId(), imageId, userPassword);
             }
             //adicionar o remover posts q deram a resposta ao post principal em cascata
-            List<String> replies = getPostAnswers(postId, 100000).value();
+            List<String> replies = getPostAnswers(postId, 0).value();
             deleteCascade(replies);
             hibernate.delete(post);
             return Result.ok(null);
@@ -250,10 +250,17 @@ public class JavaContent implements Content {
     private void deleteCascade(List<String> repliesIds) {
         for (String reply : repliesIds) {
             Post post = getPost(reply).value();
-            hibernate.delete(post);
-            if (!getPostAnswers(reply, 100000).value().isEmpty()) {
-                deleteCascade(getPostAnswers(reply, 100000).value());
+            List<String> replies = getPostAnswers(reply, 0).value();
+            if (!replies.isEmpty()) {
+                deleteCascade(replies);
             }
+            try {
+                hibernate.delete(post);
+            }catch (Exception e) {
+                e.printStackTrace(); // ou logar com logger
+                throw new WebApplicationException("Erro ao apagar post em cascade: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+            }
+
         }
     }
 
@@ -341,14 +348,14 @@ public class JavaContent implements Content {
             return Result.error(ErrorCode.INTERNAL_ERROR);
         }
 
-        try{
+        try {
             hibernate.delete(votes);
-        }catch(Exception e){
+        } catch (Exception e) {
             return Result.error(ErrorCode.INTERNAL_ERROR);
         }
         int x = post.getUpVote() - 1;
         post.setUpVote(x);
-        try{
+        try {
             hibernate.update(Post.class, post);
             return Result.ok(null);
         } catch (Exception d) {
@@ -442,21 +449,20 @@ public class JavaContent implements Content {
             return Result.error(ErrorCode.INTERNAL_ERROR);
         }
 
-        try{
+        try {
             hibernate.delete(votes);
-        }catch(Exception e){
+        } catch (Exception e) {
             return Result.error(ErrorCode.INTERNAL_ERROR);
         }
         int x = post.getDownVote() - 1;
         post.setDownVote(x);
-        try{
+        try {
             hibernate.update(post);
             return Result.ok(null);
         } catch (Exception e) {
             return Result.error(ErrorCode.INTERNAL_ERROR);
 
         }
-
 
 
     }
