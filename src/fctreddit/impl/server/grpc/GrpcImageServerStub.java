@@ -1,5 +1,7 @@
 package fctreddit.impl.server.grpc;
 
+import com.google.protobuf.ByteString;
+
 import fctreddit.api.User;
 import fctreddit.api.java.Image;
 import fctreddit.api.java.Result;
@@ -23,29 +25,35 @@ public class GrpcImageServerStub implements ImageGrpc.AsyncService, BindableServ
 
     @Override
     public void createImage(CreateImageArgs request, StreamObserver<CreateImageResult> responseObserver) {
-        /**
         Result<String> res = impl.createImage(request.getUserId(), request.getImageContents().toByteArray(), request.getPassword());
 		if( ! res.isOK() )
 			responseObserver.onError(errorCodeToStatus(res.error()));
 		else {
-			responseObserver.onNext( CreateImageResult.newBuilder().setImageId(res.value())).build();
+			responseObserver.onNext( CreateImageResult.newBuilder().setImageId(res.value()).build());
 			responseObserver.onCompleted();
 		}
-        */
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getImage'");
     }
 
     @Override
     public void getImage(GetImageArgs request, StreamObserver<GetImageResult> responseObserver) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getImage'");
+        Result<byte[]> res = impl.getImage(request.getUserId(), request.getImageId());
+		if( ! res.isOK() )
+			responseObserver.onError(errorCodeToStatus(res.error()));
+		else {
+			responseObserver.onNext( GetImageResult.newBuilder().setData(ByteString.copyFrom(res.value())).build());
+			responseObserver.onCompleted();
+		}
     }
 
     @Override
     public void deleteImage(DeleteImageArgs request, StreamObserver<DeleteImageResult> responseObserver) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteImage'");
+        Result<Void> res = impl.deleteImage(request.getUserId(), request.getImageId(), request.getPassword());
+		if( ! res.isOK() )
+			responseObserver.onError(errorCodeToStatus(res.error()));
+		else {
+			responseObserver.onNext( DeleteImageResult.newBuilder().build());
+			responseObserver.onCompleted();
+		}
     }
     
     protected static Throwable errorCodeToStatus( Result.ErrorCode error ) {
