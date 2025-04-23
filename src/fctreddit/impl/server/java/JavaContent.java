@@ -181,7 +181,7 @@ public class JavaContent implements Content {
             Result<User> userResult = userClient.getUser(existingPost.getAuthorId(), userPassword);
             if (!userResult.isOK()) {
                 Log.warning("User not authenticated: " + userResult.error());
-                return Result.error(userResult.error());
+                return Result.error(ErrorCode.BAD_REQUEST);
             }
         } catch (IOException e) {
             return Result.error(ErrorCode.INTERNAL_ERROR);
@@ -200,15 +200,15 @@ public class JavaContent implements Content {
             Result<byte[]> imageResult = imageClient.getImage(userId, imageId); //Check if the mediaUrl exists/has been created
             if (!imageResult.isOK()) {
                 Log.warning("Image not authenticated: " + imageResult.error());
-                return Result.error(imageResult.error());
+                return Result.error(ErrorCode.BAD_REQUEST);
             }
-            Log.info("Aqui 6");
-            existingPost.setMediaUrl(post.getMediaUrl());
-            Log.info("Aqui 7");// Update the mediaUrl with the new one (knwn that it exists)
+            existingPost.setMediaUrl(post.getMediaUrl());// Update the mediaUrl with the new one (knowing that it exists)
         } catch (IOException e) {
             Log.info("MERDA");
             return Result.error(ErrorCode.BAD_REQUEST);
         }
+
+
 
         try {
             hibernate.update(existingPost); // Update the user in the database
