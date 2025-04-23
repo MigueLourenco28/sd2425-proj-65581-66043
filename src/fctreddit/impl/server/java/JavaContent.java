@@ -166,23 +166,25 @@ public class JavaContent implements Content {
             throw new WebApplicationException(Status.BAD_REQUEST);
         }
 
-        Post existingPost = getPost(postId).value();
-
-        if (existingPost == null) {
-            Log.info("Post does not exist.");
-            throw new WebApplicationException(Status.NOT_FOUND);
+        Post existingPost;
+        Result<Post> postResult = getPost(postId);
+        if (!postResult.isOK()) {
+            Log.info("Post not authenticated: " + postId);
+            return Result.error(postResult.error());
         }
+        existingPost = postResult.value();
+
 
         try {
             ClientFactory clientFactory = ClientFactory.getInstance();
             Users userClient = clientFactory.getUserClient();
-            Result<User> userResult = userClient.getUser(post.getAuthorId(), userPassword); // <---- ERROR
+            Result<User> userResult = userClient.getUser(existingPost.getAuthorId(), userPassword);
             if (!userResult.isOK()) {
                 Log.warning("User not authenticated: " + userResult.error());
                 return Result.error(userResult.error());
             }
         } catch (IOException e) {
-            return Result.error(ErrorCode.NOT_FOUND);
+            return Result.error(ErrorCode.INTERNAL_ERROR);
         }
 
         if (post.getContent() != null) {
@@ -192,20 +194,25 @@ public class JavaContent implements Content {
         try {
             ClientFactory clientFactory = ClientFactory.getInstance();
             Image imageClient = clientFactory.getImageClient();
-            Result<byte[]> imageResult = imageClient.getImage(existingPost.getAuthorId(), post.getMediaUrl()); //Check if the mediaUrl exists/has been created
+            String[] splits = post.getMediaUrl().split("/");
+            String imageId = splits[splits.length - 1];
+            String userId = splits[splits.length - 2];
+            Result<byte[]> imageResult = imageClient.getImage(userId, imageId); //Check if the mediaUrl exists/has been created
             if (!imageResult.isOK()) {
                 Log.warning("Image not authenticated: " + imageResult.error());
                 return Result.error(imageResult.error());
             }
-            existingPost.setMediaUrl(post.getMediaUrl()); // Update the mediaUrl with the new one (knwn that it exists)
+            Log.info("Aqui 6");
+            existingPost.setMediaUrl(post.getMediaUrl());
+            Log.info("Aqui 7");// Update the mediaUrl with the new one (knwn that it exists)
         } catch (IOException e) {
-            return Result.error(ErrorCode.NOT_FOUND);
+            Log.info("MERDA");
+            return Result.error(ErrorCode.BAD_REQUEST);
         }
 
         try {
             hibernate.update(existingPost); // Update the user in the database
         } catch (Exception e) {
-            e.printStackTrace();
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
 
@@ -457,12 +464,12 @@ public class JavaContent implements Content {
     @Override
     public Result<Integer> getupVotes(String postId) {
         Post post;
-        try {
-            post = hibernate.get(Post.class, postId);
-        }catch (Exception e){
-            Log.warning(e.getMessage());
-            return Result.error(ErrorCode.NOT_FOUND);
+        Result<Post> postResult = getPost(postId);
+        if (!postResult.isOK()) {
+            Log.info("Post not authenticated: " + postId);
+            return Result.error(postResult.error());
         }
+        post = postResult.value();
 
         int votes = post.getUpVote();
 
@@ -473,12 +480,12 @@ public class JavaContent implements Content {
     @Override
     public Result<Integer> getDownVotes(String postId) {
         Post post;
-        try {
-            post = hibernate.get(Post.class, postId);
-        }catch (Exception e){
-            Log.warning(e.getMessage());
-            return Result.error(ErrorCode.NOT_FOUND);
+        Result<Post> postResult = getPost(postId);
+        if (!postResult.isOK()) {
+            Log.info("Post not authenticated: " + postId);
+            return Result.error(postResult.error());
         }
+        post = postResult.value();
 
         int votes = post.getDownVote();
         Log.info("valor: " + post.getDownVote());

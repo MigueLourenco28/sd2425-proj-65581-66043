@@ -55,12 +55,19 @@ public class ClientFactory {
     }
 
     public Image getImageClient() throws IOException {
-        URI[] uris = discovery.knownUrisOf("Image", 1);
-        String[] splitUri = uris[0].toString().split("/");
+        String[] splitUri;
+        URI[] uris;
+        try {
+            uris = discovery.knownUrisOf("Image", 1);
+            splitUri = uris[0].toString().split("/");
+        } catch (Exception e) {
+            //Log.info(e.getMessage());
+            throw new IOException(e);
+        }
 
-        if (splitUri[2].equals("rest")) {
+        if (splitUri[3].equals("rest")) {
             return new RestImageClient(uris[0]);
-        } else if (splitUri[2].equals("grpc")) {
+        } else if (splitUri[3].equals("grpc")) {
             return null;
         } else {
             throw new IOException("Not supported yet.");
@@ -71,9 +78,9 @@ public class ClientFactory {
         URI[] uris = discovery.knownUrisOf("Content", 1);
         String[] splitUri = uris[0].toString().split("/");
 
-        if (splitUri[2].equals("rest")) {
+        if (splitUri[3].equals("rest")) {
             return new RestContentClient(uris[0]);
-        } else if (splitUri[2].equals("grpc")) {
+        } else if (splitUri[3].equals("grpc")) {
             return null;
         } else {
             throw new IOException("Not supported yet.");
