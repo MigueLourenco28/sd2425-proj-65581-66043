@@ -229,4 +229,15 @@ public interface RestContent {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Integer getDownVotes(@PathParam(POSTID) String postId);
 
+	/**
+	 * Deletes all the votes from a user
+	 * @param userId the user that is targeted by this operation
+	 */
+
+	@DELETE
+	@Path("user/{" + USERID + "}")
+	public void deletedUser(@PathParam(USERID) String userId, @QueryParam(PASSWORD) String password);
+
+
 }
+

@@ -159,17 +159,20 @@ public class JavaUsers implements Users {
 			return Result.error(ErrorCode.FORBIDDEN);
 		}
 
-		try {
-			if(user.getAvatarUrl() != null) {
 
-				ClientFactory clientFactory  = ClientFactory.getInstance();
+
+		try {
+			ClientFactory clientFactory  = ClientFactory.getInstance();
+			if(user.getAvatarUrl() != null) {
 				Image imageClient = clientFactory.getImageClient();
 				String[] split = user.getAvatarUrl().split("/");
-				String[] split2 = split[6].split("//.");
-				String imageId = split2[0];
+				String imageId = split[split.length - 1];
 				imageClient.deleteImage(userId,imageId,password);
 				//implementar mudar a diretoria das imagens, para um user com null
 			}
+			Content contentClient = clientFactory.getContentClient();
+			contentClient.deletedUser(userId,password);
+
             hibernate.delete(user);
         } catch (Exception e) {
             e.printStackTrace();
@@ -191,63 +194,5 @@ public class JavaUsers implements Users {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 	}
-
-	/**
-	@Override
-	public void associateAvatar(String userId, String password, byte[] avatar) {
-		Log.info("associate an avatar : user = " + userId + "; pwd = " + password + "; avatarSize = " + avatar.length);
-
-		if (avatar.length == 0) {
-			throw new WebApplicationException(Status.BAD_REQUEST);
-		}
-
-		User usr = this.getUser(userId, password);
-
-		Path pathToFile = Paths.get(AVATAR_DIRECTORY + File.separator + usr.getUserId() + ".png");
-
-		try {
-			Files.deleteIfExists(pathToFile); 
-			Files.write(pathToFile, avatar);
-		} catch (Exception e) {
-			throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-		}
-	}
-
-	@Override
-	public void removeAvatar(String userId, String password) {
-		Log.info("delete an avatar : user = " + userId + "; pwd = " + password);
-		//---------------Added code------------------//
-		getUser(userId, password);
-        Path pathToFile = Paths.get(AVATAR_DIRECTORY, userId + ".png");
-		
-        try {
-            Files.deleteIfExists(pathToFile);
-        } catch (Exception e) {
-            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-        }
-		//---------------End of added code------------------//
-	}
-
-	@Override
-	public byte[] getAvatar(String userId) {
-		if (users.get(userId) == null) {
-			throw new WebApplicationException(Status.NOT_FOUND);
-		}
-
-		Path pathToFile = Paths.get(AVATAR_DIRECTORY + File.separator + userId + ".png");
-
-		try {
-			if (Files.exists(pathToFile)) {
-				return Files.readAllBytes(pathToFile);
-			} else {
-				pathToFile = Paths.get(AVATAR_DIRECTORY + File.separator + DEFAULT_AVATAR_FILE);
-				return Files.readAllBytes(pathToFile);
-			}
-		} catch (Exception e) {
-			throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-		}
-
-	}
-	*/
 
 }

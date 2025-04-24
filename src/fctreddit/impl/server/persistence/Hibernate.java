@@ -129,7 +129,7 @@ public class Hibernate {
 	 * Performs a (native) SQL query  
 	 * 
 	 * @param <T> The type of objects returned by the query
-	 * @param jpqlStatement - the sql query statement
+	 * @param sqlStatement - the sql query statement
 	 * @param clazz - the class of the objects that will be returned
 	 * @return - list of objects that match the query
 	 */
@@ -141,5 +141,24 @@ public class Hibernate {
 		    throw e;
 		}
 	}
-	
+
+	/**
+	 * Performs a jpql Hibernate query (SQL dialect) for the DELETE and UPDATE
+	 *
+	 * @param jpqlStatement - the jpql query statement
+	 */
+	public int jpqlExecute(String jpqlStatement) {
+		try (var session = sessionFactory.openSession()) {
+			var transaction = session.beginTransaction();
+			var query = session.createQuery(jpqlStatement);
+			int updated = query.executeUpdate();
+			transaction.commit();
+			return updated;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+
+
 }

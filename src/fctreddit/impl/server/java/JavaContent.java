@@ -69,15 +69,12 @@ public class JavaContent implements Content {
                 Log.info("Post " + post.getAuthorId() + " not found");
                 return Result.error(Result.ErrorCode.NOT_FOUND);
             }
-            parent.setNumReplies(parent.getNumReplies() + 1);
-            hibernate.update(parent);
         }
 
         String postId = UUID.randomUUID().toString();
         post.setPostId(postId);
 
         try {
-
             hibernate.persist(post);
             return Result.ok(postId);
 
@@ -89,23 +86,25 @@ public class JavaContent implements Content {
 
     @Override
     public Result<List<String>> getPosts(long timestamp, String sortOrder) {
-        // TODO Auto-generated method stub
 
-        String query = "SELECT u.postId FROM Post u WHERE u.parentUrl IS NULL";
+        StringBuilder query = new StringBuilder("SELECT u.postId FROM Post u WHERE u.parentUrl IS NULL");
 
         if (timestamp > 0) {
-            query += " AND u.creationTimestamp >= '%" + timestamp + "%'";
+            query.append(" AND u.creationTimestamp >= ").append(timestamp);
         }
 
-        if (sortOrder != null) {
-            if (sortOrder.equals("MOST_UP_VOTES")) {
-                query += " ORDER BY u.upVote DESC, u.postId ASC";
-            } else if (sortOrder.equals("MOST_REPLIES")) {
-                query += " ORDER BY u.numReplies DESC, u.postId ASC";
-            }
+        Log.info("Sort oder: " + sortOrder);
+
+        if (MOST_UP_VOTES.equals(sortOrder)) {
+            query.append(" ORDER BY u.upVote DESC, u.postId ASC");
+        } else if (MOST_REPLIES.equals(sortOrder)) {
+            query.append(" ORDER BY (SELECT COUNT(r) FROM Post r WHERE r.parentUrl LIKE CONCAT('%', u.postId, '%')) DESC, u.postId ASC");
         }
+
+
+        String result = query.toString();
         try {
-            List<String> posts = hibernate.jpql(query, String.class);
+            List<String> posts = hibernate.jpql(result, String.class);
             return Result.ok(posts);
         } catch (Exception e) {
             return Result.error(Result.ErrorCode.BAD_REQUEST);
@@ -219,8 +218,8 @@ public class JavaContent implements Content {
     public Result<Void> deletePost(String postId, String userPassword) {
         // TODO Auto-generated method stub
 
-        Result<Post> response  = getPost(postId);
-        if(!response.isOK()) {
+        Result<Post> response = getPost(postId);
+        if (!response.isOK()) {
             Log.info("Post not authenticated: " + postId);
             return Result.error(response.error());
         }
@@ -237,7 +236,7 @@ public class JavaContent implements Content {
                 Log.info("Image id: " + imageId);
                 Log.info("Post author: " + post.getAuthorId());
                 Log.info("Image author: " + split[split.length - 2]);
-                Result<Void> xpto = imageClient.deleteImage(post.getAuthorId(), imageId,userPassword);
+                Result<Void> xpto = imageClient.deleteImage(post.getAuthorId(), imageId, userPassword);
                 Log.info("Erro aqui: " + xpto.error().toString());
                 imageClient.deleteImage(post.getAuthorId(), imageId, userPassword);
             }
@@ -262,7 +261,7 @@ public class JavaContent implements Content {
             }
             try {
                 hibernate.delete(post);
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace(); // ou logar com logger
                 throw new WebApplicationException("Erro ao apagar post em cascade: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
             }
@@ -503,5 +502,14 @@ public class JavaContent implements Content {
         Log.info("valor: " + post.getDownVote());
         return Result.ok(votes);
     }
+
+    @Override
+    public Result<Void> deletedUser(String userId, String userPassword) {
+        //hibernate.jpqlUpdate("DELETE FROM Votes u WHERE u.userId = '" + userId + "'");
+        int num = hibernate.jpqlExecute("UPDATE Post u SET u.authorId = NULL WHERE u.authorId = '" + userId + "'");
+        Log.info("Linhas alteradas: " + num);
+        return Result.ok(null);
+    }
+
 
 }

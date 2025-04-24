@@ -177,4 +177,13 @@ public interface Content {
 	 */
 	public Result<Integer> getDownVotes(String postId);
 
+	/**
+	 *This method deletes all the votes a user have
+	 * @param userId
+	 * @param userPassword
+	 * @return
+	 */
+
+	public Result<Void> deletedUser(String userId, String userPassword);
+
 }
