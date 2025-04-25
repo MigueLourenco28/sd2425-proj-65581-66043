@@ -184,6 +184,6 @@ public interface Content {
 	 * @return
 	 */
 
-	public Result<Void> deletedUser(String userId, String userPassword);
+	public Result<Integer> deletedUser(String userId, String userPassword);
 
 }

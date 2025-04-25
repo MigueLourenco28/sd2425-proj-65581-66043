@@ -236,7 +236,8 @@ public interface RestContent {
 
 	@DELETE
 	@Path("user/{" + USERID + "}")
-	public void deletedUser(@PathParam(USERID) String userId, @QueryParam(PASSWORD) String password);
+	@Consumes(MediaType.APPLICATION_JSON)
+	public int deletedUser(@PathParam(USERID) String userId, @QueryParam(PASSWORD) String password);
 
 
 }

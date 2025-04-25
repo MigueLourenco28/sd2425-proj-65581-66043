@@ -108,8 +108,8 @@ public class RestContentClient extends ContentClient {
 
 
     @Override
-    public Result<Void> deletedUser(String userId, String password) {
-        Response r = executeOperationsDelete(target.path(userId).queryParam(RestContent.PASSWORD, password)
+    public Result<Integer> deletedUser(String userId, String password) {
+        Response r = executeOperationsDelete(target.path("user").path(userId).queryParam(RestContent.PASSWORD, password)
                 .request().accept(MediaType.APPLICATION_JSON));
         if (r == null) {
             return Result.error(Result.ErrorCode.TIMEOUT);
@@ -119,7 +119,7 @@ public class RestContentClient extends ContentClient {
         if (status != Response.Status.OK.getStatusCode()) {
             return Result.error(getErrorCodeFrom(status));
         } else {
-            return Result.ok(r.readEntity(void.class));
+            return Result.ok(r.readEntity(Integer.class));
         }
     }
 

@@ -170,8 +170,12 @@ public class JavaUsers implements Users {
 				imageClient.deleteImage(userId,imageId,password);
 				//implementar mudar a diretoria das imagens, para um user com null
 			}
+			Log.info("Passei aqui caralho");
 			Content contentClient = clientFactory.getContentClient();
-			contentClient.deletedUser(userId,password);
+			Result<Integer> response = contentClient.deletedUser(userId,password);
+			Log.info("Estas merda");
+			Log.info(response.value().toString());
+
 
             hibernate.delete(user);
         } catch (Exception e) {

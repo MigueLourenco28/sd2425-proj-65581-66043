@@ -22,6 +22,7 @@ import jakarta.ws.rs.core.Response.Status;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -236,11 +237,12 @@ public class JavaContent implements Content {
                 Log.info("Image id: " + imageId);
                 Log.info("Post author: " + post.getAuthorId());
                 Log.info("Image author: " + split[split.length - 2]);
-                Result<Void> xpto = imageClient.deleteImage(post.getAuthorId(), imageId, userPassword);
-                Log.info("Erro aqui: " + xpto.error().toString());
+                //Result<Void> xpto = imageClient.deleteImage(post.getAuthorId(), imageId, userPassword);
+                //Log.info("Erro aqui: " + xpto.error().toString());
                 imageClient.deleteImage(post.getAuthorId(), imageId, userPassword);
             }
-            //adicionar o remover posts q deram a resposta ao post principal em cascata
+            hibernate.jpqlExecute("DELETE FROM Votes u WHERE u.postId = '" + postId + "'");
+
             List<String> replies = getPostAnswers(postId, 0).value();
             deleteCascade(replies);
             hibernate.delete(post);
@@ -504,11 +506,27 @@ public class JavaContent implements Content {
     }
 
     @Override
-    public Result<Void> deletedUser(String userId, String userPassword) {
-        //hibernate.jpqlUpdate("DELETE FROM Votes u WHERE u.userId = '" + userId + "'");
+    public Result<Integer> deletedUser(String userId, String userPassword) {
+        List<Votes> votes = hibernate.jpql("SELECT u FROM Votes u WHERE u.userId = '" + userId + "'", Votes.class);
+        List<Post> posts = new ArrayList<Post>();
+        for (Votes vote : votes) {
+            Post post = getPost(vote.getPostId()).value();
+            if (vote.getType().equals(UP)) {
+                post.setUpVote(post.getUpVote() - 1);
+            } else {
+                post.setDownVote(post.getDownVote() - 1);
+            }
+            posts.add(post);
+        }
+        try {
+            hibernate.update(posts.toArray());
+        } catch (Exception e) {
+            return Result.error(ErrorCode.CONFLICT);
+        }
         int num = hibernate.jpqlExecute("UPDATE Post u SET u.authorId = NULL WHERE u.authorId = '" + userId + "'");
+        hibernate.delete(votes.toArray());
         Log.info("Linhas alteradas: " + num);
-        return Result.ok(null);
+        return Result.ok(num);
     }
 
 
