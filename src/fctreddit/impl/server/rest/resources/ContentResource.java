@@ -5,6 +5,7 @@ import fctreddit.api.java.Content;
 import fctreddit.api.java.Result;
 import fctreddit.api.rest.RestContent;
 import fctreddit.impl.server.java.JavaContent;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response.Status;
 
@@ -148,18 +149,24 @@ public class ContentResource implements RestContent {
 		return res.value();
     }
 
-	@Override
-    public List<String> getPostIds(String userId) {
-        Log.info("getPostId : userId = " + userId );
 
-		Result<List<String>> res = cont.getPostIds(userId);
+
+	@Override
+	public int deletedUser(String userId, String password) {
+		Log.info("deletedUser : userId = " + userId);
+
+		Result<Integer> res = cont.deletedUser(userId, password);
 		if(!res.isOK()) {
 			throw new WebApplicationException(errorCodeToStatus(res.error()));
 		}
-		return res.value();
-    }
 
-    protected static Status errorCodeToStatus( Result.ErrorCode error ) {
+		return res.value();
+	}
+
+
+
+
+	protected static Status errorCodeToStatus( Result.ErrorCode error ) {
     	Status status =  switch( error) {
     	case NOT_FOUND -> Status.NOT_FOUND; 
     	case CONFLICT -> Status.CONFLICT;

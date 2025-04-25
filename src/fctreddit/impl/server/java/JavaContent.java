@@ -24,7 +24,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 public class JavaContent implements Content {
@@ -39,6 +41,9 @@ public class JavaContent implements Content {
     private static final String DOWN = "DOWN";
 
     private static Logger Log = Logger.getLogger(JavaContent.class.getName());
+
+    private final Map<String, Object> postLocks = new ConcurrentHashMap<>();
+
 
     public JavaContent() {
         hibernate = Hibernate.getInstance();
@@ -60,23 +65,36 @@ public class JavaContent implements Content {
             return Result.error(ErrorCode.NOT_FOUND);
         }
 
+        Object lock = null;
         if (post.getParentUrl() != null) {
             String[] splits = post.getParentUrl().split("/");
             String parentId = splits[splits.length - 1];
-
             Post parent = hibernate.get(Post.class, parentId);
 
             if (parent == null) {
                 Log.info("Post " + post.getAuthorId() + " not found");
                 return Result.error(Result.ErrorCode.NOT_FOUND);
             }
+
+            lock = postLocks.get(parentId);
         }
+
 
         String postId = UUID.randomUUID().toString();
         post.setPostId(postId);
 
+
         try {
-            hibernate.persist(post);
+
+            if (lock != null) {
+                synchronized (lock) {
+                    hibernate.persist(post);
+                    Log.info("Notificar");
+                    lock.notifyAll();
+                }
+            } else {
+                hibernate.persist(post);
+            }
             return Result.ok(postId);
 
         } catch (Exception e) {
@@ -143,16 +161,24 @@ public class JavaContent implements Content {
     public Result<List<String>> getPostAnswers(String postId, long maxTimeout) {
         // TODO Auto-generated method stub
 
-        Post post = getPost(postId).value();
+        Result<Post> result = getPost(postId);
+        if (!result.isOK()) return Result.error(result.error());
 
         if (maxTimeout > 0) {
-            //temos de adicionar um wait mas nao sei como se faz.
-            return null;
-        } else {
-            List<String> responses = hibernate.jpql("SELECT u.postId FROM Post u WHERE u.parentUrl LIKE '%" + postId + "%'", String.class);
-            return Result.ok(responses);
+            Object lock = postLocks.computeIfAbsent(postId, k -> new Object());
+            synchronized (lock) {
+                try {
+                    Log.info("Esperar no lock do postId: " + postId);
+                    lock.wait(maxTimeout);
+                    Log.info("Parou de esperar");
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
         }
 
+        List<String> responses = hibernate.jpql("SELECT u.postId FROM Post u WHERE u.parentUrl LIKE '%" + postId + "%'", String.class);
+        return Result.ok(responses);
     }
 
     @Override
