@@ -4,7 +4,9 @@ import fctreddit.Discovery;
 import fctreddit.api.java.Content;
 import fctreddit.api.java.Image;
 import fctreddit.api.java.Users;
+import fctreddit.clients.grpc.GrpcImageClient;
 import fctreddit.clients.grpc.GrpcUsersClient;
+import fctreddit.clients.grpc.GrpcContentClient;
 import fctreddit.clients.rest.ContentClients.RestContentClient;
 import fctreddit.clients.rest.ImageClients.RestImageClient;
 import fctreddit.clients.rest.UserClients.RestUsersClient;
@@ -48,7 +50,7 @@ public class ClientFactory {
         if (splitUri[3].equals("rest")) {
             return new RestUsersClient(uris[0]);
         } else if (splitUri[3].equals("grpc")) {
-            return null;
+            return new GrpcUsersClient(uris[0]);
         } else {
             throw new IOException("Not supported yet.");
         }
@@ -68,7 +70,7 @@ public class ClientFactory {
         if (splitUri[3].equals("rest")) {
             return new RestImageClient(uris[0]);
         } else if (splitUri[3].equals("grpc")) {
-            return null;
+            return new GrpcImageClient(uris[0]);
         } else {
             throw new IOException("Not supported yet.");
         }
@@ -81,7 +83,7 @@ public class ClientFactory {
         if (splitUri[3].equals("rest")) {
             return new RestContentClient(uris[0]);
         } else if (splitUri[3].equals("grpc")) {
-            return null;
+            return new GrpcContentClient(uris[0]);
         } else {
             throw new IOException("Not supported yet.");
         }

@@ -148,6 +148,17 @@ public class ContentResource implements RestContent {
 		return res.value();
     }
 
+	@Override
+    public List<String> getPostIds(String userId) {
+        Log.info("getPostId : userId = " + userId );
+
+		Result<List<String>> res = cont.getPostIds(userId);
+		if(!res.isOK()) {
+			throw new WebApplicationException(errorCodeToStatus(res.error()));
+		}
+		return res.value();
+    }
+
     protected static Status errorCodeToStatus( Result.ErrorCode error ) {
     	Status status =  switch( error) {
     	case NOT_FOUND -> Status.NOT_FOUND; 
