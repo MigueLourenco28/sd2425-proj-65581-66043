@@ -34,6 +34,6 @@ public abstract class ContentClient extends Client implements Content {
 
     abstract public Result<Integer> getDownVotes(String postId);
 
-    abstract public Result<List<String>> getPostIds(String userId);
+
 
 }

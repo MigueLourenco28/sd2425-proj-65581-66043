@@ -42,7 +42,7 @@ public class JavaContent implements Content {
 
     private static Logger Log = Logger.getLogger(JavaContent.class.getName());
 
-    private final Map<String, Object> postLocks = new ConcurrentHashMap<>();
+    private static Map<String, Object> postLocks = new ConcurrentHashMap<>();
 
 
     public JavaContent() {
@@ -75,7 +75,7 @@ public class JavaContent implements Content {
                 Log.info("Post " + post.getAuthorId() + " not found");
                 return Result.error(Result.ErrorCode.NOT_FOUND);
             }
-
+            postLocks.putIfAbsent(parentId, new Object());
             lock = postLocks.get(parentId);
         }
 
