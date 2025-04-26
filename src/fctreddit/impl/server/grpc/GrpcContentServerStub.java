@@ -2,6 +2,7 @@ package fctreddit.impl.server.grpc;
 
 import java.util.List;
 
+import fctreddit.impl.grpc.generated_java.ContentProtoBuf;
 import org.hibernate.sql.Update;
 
 import fctreddit.api.Post;
@@ -46,9 +47,8 @@ public class GrpcContentServerStub implements ContentGrpc.AsyncService, Bindable
 		if( ! res.isOK() )
 			responseObserver.onError(errorCodeToStatus(res.error()));
 		else {
-			for (int i = 0; i < res.value().size(); i++) 
-                responseObserver.onNext(GetPostsResult.newBuilder().setPostId(i, res.value().get(i)).build());
-			responseObserver.onCompleted();
+            responseObserver.onNext(ContentProtoBuf.GetPostsResult.newBuilder().addAllPostId(res.value()).build());
+            responseObserver.onCompleted();
 		}
     }
 
@@ -69,8 +69,7 @@ public class GrpcContentServerStub implements ContentGrpc.AsyncService, Bindable
 		if( ! res.isOK() )
 			responseObserver.onError(errorCodeToStatus(res.error()));
 		else {
-			for (int i = 0; i < res.value().size(); i++) 
-                responseObserver.onNext(GetPostsResult.newBuilder().setPostId(i, res.value().get(i)).build());
+            responseObserver.onNext(ContentProtoBuf.GetPostsResult.newBuilder().addAllPostId(res.value()).build());
 			responseObserver.onCompleted();
 		}
     }
@@ -103,7 +102,7 @@ public class GrpcContentServerStub implements ContentGrpc.AsyncService, Bindable
     	if( ! res.isOK() ) 
     		responseObserver.onError(errorCodeToStatus(res.error()));
     	else {
-			responseObserver.onNext( EmptyMessage.newBuilder().build());
+			responseObserver.onNext(EmptyMessage.newBuilder().build());
 			responseObserver.onCompleted();
     	}
     }

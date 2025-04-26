@@ -91,6 +91,7 @@ public class JavaContent implements Content {
                     hibernate.persist(post);
                     Log.info("Notificar");
                     lock.notifyAll();
+                    Log.info("Já notificou");
                 }
             } else {
                 hibernate.persist(post);
@@ -172,7 +173,7 @@ public class JavaContent implements Content {
                     lock.wait(maxTimeout);
                     Log.info("Parou de esperar");
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+
                 }
             }
         }

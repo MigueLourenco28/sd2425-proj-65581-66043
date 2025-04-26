@@ -49,10 +49,8 @@ public class ClientFactory {
 
         if (splitUri[3].equals("rest")) {
             return new RestUsersClient(uris[0]);
-        } else if (splitUri[3].equals("grpc")) {
-            return new GrpcUsersClient(uris[0]);
         } else {
-            throw new IOException("Not supported yet.");
+            return new GrpcUsersClient(uris[0]);
         }
     }
 
@@ -69,10 +67,8 @@ public class ClientFactory {
 
         if (splitUri[3].equals("rest")) {
             return new RestImageClient(uris[0]);
-        } else if (splitUri[3].equals("grpc")) {
-            return new GrpcImageClient(uris[0]);
         } else {
-            throw new IOException("Not supported yet.");
+            return new GrpcImageClient(uris[0]);
         }
     }
 
@@ -82,10 +78,8 @@ public class ClientFactory {
 
         if (splitUri[3].equals("rest")) {
             return new RestContentClient(uris[0]);
-        } else if (splitUri[3].equals("grpc")) {
+        } else{
             return new GrpcContentClient(uris[0]);
-        } else {
-            throw new IOException("Not supported yet.");
         }
     }
 

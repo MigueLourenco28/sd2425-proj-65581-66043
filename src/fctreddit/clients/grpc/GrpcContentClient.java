@@ -117,12 +117,12 @@ public class GrpcContentClient extends ContentClient {
     }
 
     @Override
-    public Result<List<String>> getPostIds(String userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPostIds'");
+    public Result<Integer> deletedUser(String userId, String userPassword) {
+        return null;
     }
-	
-	static ErrorCode statusToErrorCode( Status status ) {
+
+
+    static ErrorCode statusToErrorCode( Status status ) {
     	return switch( status.getCode() ) {
     		case OK -> ErrorCode.OK;
     		case NOT_FOUND -> ErrorCode.NOT_FOUND;
