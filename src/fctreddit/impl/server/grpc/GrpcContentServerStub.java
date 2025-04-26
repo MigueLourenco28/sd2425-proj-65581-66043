@@ -162,6 +162,17 @@ public class GrpcContentServerStub implements ContentGrpc.AsyncService, Bindable
 
     }
 
+    @Override
+    public void deletedUser(DeletedUserArgs request, StreamObserver<DeletedUserResult> responseObserver) {
+        Result<Integer> res = impl.deletedUser(request.getUserId(), request.getUserPassword());
+        if( ! res.isOK() )
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else {
+            responseObserver.onNext(DeletedUserResult.newBuilder().setNum(res.value()).build());
+            responseObserver.onCompleted();
+        }
+    }
+
     protected static Throwable errorCodeToStatus( Result.ErrorCode error ) {
     	var status =  switch( error) {
     	case NOT_FOUND -> io.grpc.Status.NOT_FOUND; 

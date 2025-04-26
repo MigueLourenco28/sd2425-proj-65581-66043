@@ -388,28 +388,28 @@ public final class ContentGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs,
-      fctreddit.impl.grpc.generated_java.ContentProtoBuf.EmptyMessage> getDeletedUserMethod;
+      fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserResult> getDeletedUserMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "deletedUser",
       requestType = fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs.class,
-      responseType = fctreddit.impl.grpc.generated_java.ContentProtoBuf.EmptyMessage.class,
+      responseType = fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserResult.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs,
-      fctreddit.impl.grpc.generated_java.ContentProtoBuf.EmptyMessage> getDeletedUserMethod() {
-    io.grpc.MethodDescriptor<fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs, fctreddit.impl.grpc.generated_java.ContentProtoBuf.EmptyMessage> getDeletedUserMethod;
+      fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserResult> getDeletedUserMethod() {
+    io.grpc.MethodDescriptor<fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs, fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserResult> getDeletedUserMethod;
     if ((getDeletedUserMethod = ContentGrpc.getDeletedUserMethod) == null) {
       synchronized (ContentGrpc.class) {
         if ((getDeletedUserMethod = ContentGrpc.getDeletedUserMethod) == null) {
           ContentGrpc.getDeletedUserMethod = getDeletedUserMethod =
-              io.grpc.MethodDescriptor.<fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs, fctreddit.impl.grpc.generated_java.ContentProtoBuf.EmptyMessage>newBuilder()
+              io.grpc.MethodDescriptor.<fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs, fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserResult>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "deletedUser"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  fctreddit.impl.grpc.generated_java.ContentProtoBuf.EmptyMessage.getDefaultInstance()))
+                  fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserResult.getDefaultInstance()))
               .setSchemaDescriptor(new ContentMethodDescriptorSupplier("deletedUser"))
               .build();
         }
@@ -553,7 +553,7 @@ public final class ContentGrpc {
     /**
      */
     default void deletedUser(fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs request,
-        io.grpc.stub.StreamObserver<fctreddit.impl.grpc.generated_java.ContentProtoBuf.EmptyMessage> responseObserver) {
+        io.grpc.stub.StreamObserver<fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserResult> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeletedUserMethod(), responseObserver);
     }
   }
@@ -684,7 +684,7 @@ public final class ContentGrpc {
     /**
      */
     public void deletedUser(fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs request,
-        io.grpc.stub.StreamObserver<fctreddit.impl.grpc.generated_java.ContentProtoBuf.EmptyMessage> responseObserver) {
+        io.grpc.stub.StreamObserver<fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserResult> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getDeletedUserMethod(), getCallOptions()), request, responseObserver);
     }
@@ -792,7 +792,7 @@ public final class ContentGrpc {
 
     /**
      */
-    public fctreddit.impl.grpc.generated_java.ContentProtoBuf.EmptyMessage deletedUser(fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs request) {
+    public fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserResult deletedUser(fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDeletedUserMethod(), getCallOptions(), request);
     }
@@ -912,7 +912,7 @@ public final class ContentGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<fctreddit.impl.grpc.generated_java.ContentProtoBuf.EmptyMessage> deletedUser(
+    public com.google.common.util.concurrent.ListenableFuture<fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserResult> deletedUser(
         fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getDeletedUserMethod(), getCallOptions()), request);
@@ -1000,7 +1000,7 @@ public final class ContentGrpc {
           break;
         case METHODID_DELETED_USER:
           serviceImpl.deletedUser((fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs) request,
-              (io.grpc.stub.StreamObserver<fctreddit.impl.grpc.generated_java.ContentProtoBuf.EmptyMessage>) responseObserver);
+              (io.grpc.stub.StreamObserver<fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserResult>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -1109,7 +1109,7 @@ public final class ContentGrpc {
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
               fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs,
-              fctreddit.impl.grpc.generated_java.ContentProtoBuf.EmptyMessage>(
+              fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserResult>(
                 service, METHODID_DELETED_USER)))
         .build();
   }

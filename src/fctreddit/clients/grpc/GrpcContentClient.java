@@ -16,7 +16,7 @@ import fctreddit.api.java.Result.ErrorCode;
 import fctreddit.clients.java.ContentClient;
 import fctreddit.impl.grpc.generated_java.ContentGrpc;
 import fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs;
-import fctreddit.impl.grpc.generated_java.ContentProtoBuf.EmptyMessage;
+import fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserResult;
 import fctreddit.impl.grpc.generated_java.ContentProtoBuf.GetPostAnswersArgs;
 import fctreddit.impl.grpc.generated_java.ContentProtoBuf.GetPostArgs;
 import fctreddit.impl.grpc.generated_java.ContentProtoBuf.GetPostsResult;
@@ -121,12 +121,12 @@ public class GrpcContentClient extends ContentClient {
     @Override
     public Result<Integer> deletedUser(String userId, String userPassword) {
         try {
-			EmptyMessage res = stub.deletedUser(DeletedUserArgs.newBuilder()
+			DeletedUserResult res = stub.deletedUser(DeletedUserArgs.newBuilder()
 					.setUserId(userId)
                     .setUserPassword(userPassword)
 					.build());
 			
-			return Result.ok();
+			return Result.ok(res.getNum());
 		} catch (StatusRuntimeException sre) {
 			return Result.error( statusToErrorCode(sre.getStatus()));
 		}

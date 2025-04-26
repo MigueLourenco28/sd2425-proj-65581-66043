@@ -29,7 +29,7 @@ service Content {
 	
 	rpc getDownVotes ( GetPostArgs ) returns ( VoteCountResult ) {}
 
-	rpc deletedUser ( DeletedUserArgs ) returns ( EmptyMessage ) {}
+	rpc deletedUser ( DeletedUserArgs ) returns ( DeletedUserResult ) {}
 }
 
 message GrpcPost {
@@ -97,4 +97,8 @@ message VoteCountResult {
 message DeletedUserArgs {
 	string userId = 1;
 	string userPassword = 2;
+}
+
+message DeletedUserResult {
+	int32 num = 1;
 }
