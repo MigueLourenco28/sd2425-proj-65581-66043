@@ -15,6 +15,8 @@ import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
 import fctreddit.clients.java.ContentClient;
 import fctreddit.impl.grpc.generated_java.ContentGrpc;
+import fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs;
+import fctreddit.impl.grpc.generated_java.ContentProtoBuf.EmptyMessage;
 import fctreddit.impl.grpc.generated_java.ContentProtoBuf.GetPostAnswersArgs;
 import fctreddit.impl.grpc.generated_java.ContentProtoBuf.GetPostArgs;
 import fctreddit.impl.grpc.generated_java.ContentProtoBuf.GetPostsResult;
@@ -115,14 +117,22 @@ public class GrpcContentClient extends ContentClient {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getDownVotes'");
     }
-
+    
     @Override
     public Result<Integer> deletedUser(String userId, String userPassword) {
-        return null;
+        try {
+			EmptyMessage res = stub.deletedUser(DeletedUserArgs.newBuilder()
+					.setUserId(userId)
+                    .setUserPassword(userPassword)
+					.build());
+			
+			return Result.ok();
+		} catch (StatusRuntimeException sre) {
+			return Result.error( statusToErrorCode(sre.getStatus()));
+		}
     }
-
-
-    static ErrorCode statusToErrorCode( Status status ) {
+	
+	static ErrorCode statusToErrorCode( Status status ) {
     	return switch( status.getCode() ) {
     		case OK -> ErrorCode.OK;
     		case NOT_FOUND -> ErrorCode.NOT_FOUND;

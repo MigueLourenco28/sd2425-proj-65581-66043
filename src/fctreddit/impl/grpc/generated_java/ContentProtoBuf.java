@@ -9130,6 +9130,726 @@ public final class ContentProtoBuf {
 
   }
 
+  public interface DeletedUserArgsOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:DeletedUserArgs)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string userId = 1;</code>
+     * @return The userId.
+     */
+    java.lang.String getUserId();
+    /**
+     * <code>string userId = 1;</code>
+     * @return The bytes for userId.
+     */
+    com.google.protobuf.ByteString
+        getUserIdBytes();
+
+    /**
+     * <code>string userPassword = 2;</code>
+     * @return The userPassword.
+     */
+    java.lang.String getUserPassword();
+    /**
+     * <code>string userPassword = 2;</code>
+     * @return The bytes for userPassword.
+     */
+    com.google.protobuf.ByteString
+        getUserPasswordBytes();
+  }
+  /**
+   * Protobuf type {@code DeletedUserArgs}
+   */
+  public static final class DeletedUserArgs extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:DeletedUserArgs)
+      DeletedUserArgsOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use DeletedUserArgs.newBuilder() to construct.
+    private DeletedUserArgs(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private DeletedUserArgs() {
+      userId_ = "";
+      userPassword_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new DeletedUserArgs();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private DeletedUserArgs(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              userId_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              userPassword_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (com.google.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return fctreddit.impl.grpc.generated_java.ContentProtoBuf.internal_static_DeletedUserArgs_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return fctreddit.impl.grpc.generated_java.ContentProtoBuf.internal_static_DeletedUserArgs_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs.class, fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs.Builder.class);
+    }
+
+    public static final int USERID_FIELD_NUMBER = 1;
+    private volatile java.lang.Object userId_;
+    /**
+     * <code>string userId = 1;</code>
+     * @return The userId.
+     */
+    @java.lang.Override
+    public java.lang.String getUserId() {
+      java.lang.Object ref = userId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        userId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string userId = 1;</code>
+     * @return The bytes for userId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getUserIdBytes() {
+      java.lang.Object ref = userId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        userId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int USERPASSWORD_FIELD_NUMBER = 2;
+    private volatile java.lang.Object userPassword_;
+    /**
+     * <code>string userPassword = 2;</code>
+     * @return The userPassword.
+     */
+    @java.lang.Override
+    public java.lang.String getUserPassword() {
+      java.lang.Object ref = userPassword_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        userPassword_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string userPassword = 2;</code>
+     * @return The bytes for userPassword.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getUserPasswordBytes() {
+      java.lang.Object ref = userPassword_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        userPassword_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(userId_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, userId_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(userPassword_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, userPassword_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(userId_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, userId_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(userPassword_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, userPassword_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs)) {
+        return super.equals(obj);
+      }
+      fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs other = (fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs) obj;
+
+      if (!getUserId()
+          .equals(other.getUserId())) return false;
+      if (!getUserPassword()
+          .equals(other.getUserPassword())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + USERID_FIELD_NUMBER;
+      hash = (53 * hash) + getUserId().hashCode();
+      hash = (37 * hash) + USERPASSWORD_FIELD_NUMBER;
+      hash = (53 * hash) + getUserPassword().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code DeletedUserArgs}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:DeletedUserArgs)
+        fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgsOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return fctreddit.impl.grpc.generated_java.ContentProtoBuf.internal_static_DeletedUserArgs_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return fctreddit.impl.grpc.generated_java.ContentProtoBuf.internal_static_DeletedUserArgs_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs.class, fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs.Builder.class);
+      }
+
+      // Construct using fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        userId_ = "";
+
+        userPassword_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return fctreddit.impl.grpc.generated_java.ContentProtoBuf.internal_static_DeletedUserArgs_descriptor;
+      }
+
+      @java.lang.Override
+      public fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs getDefaultInstanceForType() {
+        return fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs build() {
+        fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs buildPartial() {
+        fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs result = new fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs(this);
+        result.userId_ = userId_;
+        result.userPassword_ = userPassword_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs) {
+          return mergeFrom((fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs other) {
+        if (other == fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs.getDefaultInstance()) return this;
+        if (!other.getUserId().isEmpty()) {
+          userId_ = other.userId_;
+          onChanged();
+        }
+        if (!other.getUserPassword().isEmpty()) {
+          userPassword_ = other.userPassword_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private java.lang.Object userId_ = "";
+      /**
+       * <code>string userId = 1;</code>
+       * @return The userId.
+       */
+      public java.lang.String getUserId() {
+        java.lang.Object ref = userId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          userId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string userId = 1;</code>
+       * @return The bytes for userId.
+       */
+      public com.google.protobuf.ByteString
+          getUserIdBytes() {
+        java.lang.Object ref = userId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          userId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string userId = 1;</code>
+       * @param value The userId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUserId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        userId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string userId = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUserId() {
+        
+        userId_ = getDefaultInstance().getUserId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string userId = 1;</code>
+       * @param value The bytes for userId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUserIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        userId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object userPassword_ = "";
+      /**
+       * <code>string userPassword = 2;</code>
+       * @return The userPassword.
+       */
+      public java.lang.String getUserPassword() {
+        java.lang.Object ref = userPassword_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          userPassword_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string userPassword = 2;</code>
+       * @return The bytes for userPassword.
+       */
+      public com.google.protobuf.ByteString
+          getUserPasswordBytes() {
+        java.lang.Object ref = userPassword_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          userPassword_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string userPassword = 2;</code>
+       * @param value The userPassword to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUserPassword(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        userPassword_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string userPassword = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUserPassword() {
+        
+        userPassword_ = getDefaultInstance().getUserPassword();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string userPassword = 2;</code>
+       * @param value The bytes for userPassword to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUserPasswordBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        userPassword_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:DeletedUserArgs)
+    }
+
+    // @@protoc_insertion_point(class_scope:DeletedUserArgs)
+    private static final fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs();
+    }
+
+    public static fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<DeletedUserArgs>
+        PARSER = new com.google.protobuf.AbstractParser<DeletedUserArgs>() {
+      @java.lang.Override
+      public DeletedUserArgs parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new DeletedUserArgs(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<DeletedUserArgs> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<DeletedUserArgs> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public fctreddit.impl.grpc.generated_java.ContentProtoBuf.DeletedUserArgs getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_GrpcPost_descriptor;
   private static final 
@@ -9190,6 +9910,11 @@ public final class ContentProtoBuf {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_VoteCountResult_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_DeletedUserArgs_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DeletedUserArgs_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -9223,24 +9948,27 @@ public final class ContentProtoBuf {
       "H\000\210\001\001B\013\n\t_password\"T\n\016ChangeVoteArgs\022\016\n\006" +
       "postId\030\001 \001(\t\022\016\n\006userId\030\002 \001(\t\022\025\n\010password" +
       "\030\003 \001(\tH\000\210\001\001B\013\n\t_password\"\016\n\014EmptyMessage" +
-      "\" \n\017VoteCountResult\022\r\n\005count\030\001 \001(\0052\331\004\n\007C" +
-      "ontent\0222\n\ncreatePost\022\017.CreatePostArgs\032\021." +
-      "CreatePostResult\"\000\022,\n\010getPosts\022\r.GetPost" +
-      "sArgs\032\017.GetPostsResult\"\000\022$\n\007getPost\022\014.Ge" +
-      "tPostArgs\032\t.GrpcPost\"\000\0228\n\016getPostAnswers" +
-      "\022\023.GetPostAnswersArgs\032\017.GetPostsResult\"\000" +
-      "\022*\n\nupdatePost\022\017.UpdatePostArgs\032\t.GrpcPo" +
-      "st\"\000\022.\n\ndeletePost\022\017.DeletePostArgs\032\r.Em" +
-      "ptyMessage\"\000\022.\n\nupVotePost\022\017.ChangeVoteA" +
-      "rgs\032\r.EmptyMessage\"\000\0224\n\020removeUpVotePost" +
-      "\022\017.ChangeVoteArgs\032\r.EmptyMessage\"\000\0220\n\014do" +
-      "wnVotePost\022\017.ChangeVoteArgs\032\r.EmptyMessa" +
-      "ge\"\000\0226\n\022removeDownVotePost\022\017.ChangeVoteA" +
-      "rgs\032\r.EmptyMessage\"\000\022.\n\ngetUpVotes\022\014.Get" +
-      "PostArgs\032\020.VoteCountResult\"\000\0220\n\014getDownV" +
-      "otes\022\014.GetPostArgs\032\020.VoteCountResult\"\000B5" +
-      "\n\"fctreddit.impl.grpc.generated_javaB\017Co" +
-      "ntentProtoBufb\006proto3"
+      "\" \n\017VoteCountResult\022\r\n\005count\030\001 \001(\005\"7\n\017De" +
+      "letedUserArgs\022\016\n\006userId\030\001 \001(\t\022\024\n\014userPas" +
+      "sword\030\002 \001(\t2\213\005\n\007Content\0222\n\ncreatePost\022\017." +
+      "CreatePostArgs\032\021.CreatePostResult\"\000\022,\n\010g" +
+      "etPosts\022\r.GetPostsArgs\032\017.GetPostsResult\"" +
+      "\000\022$\n\007getPost\022\014.GetPostArgs\032\t.GrpcPost\"\000\022" +
+      "8\n\016getPostAnswers\022\023.GetPostAnswersArgs\032\017" +
+      ".GetPostsResult\"\000\022*\n\nupdatePost\022\017.Update" +
+      "PostArgs\032\t.GrpcPost\"\000\022.\n\ndeletePost\022\017.De" +
+      "letePostArgs\032\r.EmptyMessage\"\000\022.\n\nupVoteP" +
+      "ost\022\017.ChangeVoteArgs\032\r.EmptyMessage\"\000\0224\n" +
+      "\020removeUpVotePost\022\017.ChangeVoteArgs\032\r.Emp" +
+      "tyMessage\"\000\0220\n\014downVotePost\022\017.ChangeVote" +
+      "Args\032\r.EmptyMessage\"\000\0226\n\022removeDownVoteP" +
+      "ost\022\017.ChangeVoteArgs\032\r.EmptyMessage\"\000\022.\n" +
+      "\ngetUpVotes\022\014.GetPostArgs\032\020.VoteCountRes" +
+      "ult\"\000\0220\n\014getDownVotes\022\014.GetPostArgs\032\020.Vo" +
+      "teCountResult\"\000\0220\n\013deletedUser\022\020.Deleted" +
+      "UserArgs\032\r.EmptyMessage\"\000B5\n\"fctreddit.i" +
+      "mpl.grpc.generated_javaB\017ContentProtoBuf" +
+      "b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -9318,6 +10046,12 @@ public final class ContentProtoBuf {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_VoteCountResult_descriptor,
         new java.lang.String[] { "Count", });
+    internal_static_DeletedUserArgs_descriptor =
+      getDescriptor().getMessageTypes().get(12);
+    internal_static_DeletedUserArgs_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_DeletedUserArgs_descriptor,
+        new java.lang.String[] { "UserId", "UserPassword", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
