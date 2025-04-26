@@ -190,7 +190,7 @@ public class JavaContent implements Content {
                 userPassword == null || userPassword.isEmpty() ||
                 post == null) { // Check if userId, password or user is null
             Log.info("Invalid input.");
-            throw new WebApplicationException(Status.BAD_REQUEST);
+            return Result.error(ErrorCode.BAD_REQUEST);
         }
 
         Post existingPost;
@@ -208,7 +208,7 @@ public class JavaContent implements Content {
             Log.info("Post already has replies.");
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
-        if (post.getUpVote() > 0 || post.getDownVote() > 0) {
+        if (existingPost.getUpVote() > 0 || existingPost.getDownVote() > 0) {
             Log.info("Post has up votes and/or down votes.");
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
@@ -236,7 +236,7 @@ public class JavaContent implements Content {
         try {
             hibernate.update(existingPost); // Update the user in the database
         } catch (Exception e) {
-            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+            return Result.error(ErrorCode.INTERNAL_ERROR);
         }
 
         return Result.ok(existingPost);

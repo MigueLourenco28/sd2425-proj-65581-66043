@@ -91,7 +91,7 @@ public class GrpcContentServerStub implements ContentGrpc.AsyncService, Bindable
     	if( ! res.isOK() ) 
     		responseObserver.onError(errorCodeToStatus(res.error()));
     	else {
-			responseObserver.onNext( EmptyMessage.newBuilder().build());
+			responseObserver.onNext(EmptyMessage.newBuilder().build());
 			responseObserver.onCompleted();
     	}
     }

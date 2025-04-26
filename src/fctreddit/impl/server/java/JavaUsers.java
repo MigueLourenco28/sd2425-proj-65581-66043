@@ -125,7 +125,7 @@ public class JavaUsers implements Users {
 			hibernate.update(existingUser); // Update the user in the database
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+			return Result.error(ErrorCode.INTERNAL_ERROR);
 		}
 
 		return Result.ok(existingUser);
@@ -168,7 +168,6 @@ public class JavaUsers implements Users {
 				String[] split = user.getAvatarUrl().split("/");
 				String imageId = split[split.length - 1];
 				imageClient.deleteImage(userId,imageId,password);
-				//implementar mudar a diretoria das imagens, para um user com null
 			}
 			Log.info("Passei aqui caralho");
 			Content contentClient = clientFactory.getContentClient();
