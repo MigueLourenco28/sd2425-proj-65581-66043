@@ -123,7 +123,6 @@ public class RestContentClient extends ContentClient {
         }
     }
 
-
     public static Result.ErrorCode getErrorCodeFrom(int status) {
         return switch (status) {
             case 200, 209 -> Result.ErrorCode.OK;
@@ -136,4 +135,5 @@ public class RestContentClient extends ContentClient {
             default -> Result.ErrorCode.INTERNAL_ERROR;
         };
     }
+
 }

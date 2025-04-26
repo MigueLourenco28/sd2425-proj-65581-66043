@@ -119,26 +119,47 @@ public class GrpcContentServerStub implements ContentGrpc.AsyncService, Bindable
 
     @Override
     public void downVotePost(ChangeVoteArgs request, StreamObserver<EmptyMessage> responseObserver) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'downVotePost'");
+        Result<Void> res = impl.downVotePost( request.getPostId() , request.getUserId(), request.getPassword());	
+    	if( ! res.isOK() ) 
+    		responseObserver.onError(errorCodeToStatus(res.error()));
+    	else {
+            responseObserver.onNext( EmptyMessage.newBuilder().build());
+            responseObserver.onCompleted();
+        }
     }
 
     @Override
     public void removeDownVotePost(ChangeVoteArgs request, StreamObserver<EmptyMessage> responseObserver) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeDownVotePost'");
+        Result<Void> res = impl.removeDownVotePost( request.getPostId() , request.getUserId(), request.getPassword());	
+    	if( ! res.isOK() ) 
+    		responseObserver.onError(errorCodeToStatus(res.error()));
+    	else {
+            responseObserver.onNext( EmptyMessage.newBuilder().build());
+            responseObserver.onCompleted();
+        }
     }
 
     @Override
     public void getUpVotes(GetPostArgs request, StreamObserver<VoteCountResult> responseObserver) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUpVotes'");
+        Result<Integer> res = impl.getupVotes(request.getPostId());
+        if( ! res.isOK() )
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else {
+            responseObserver.onNext(VoteCountResult.newBuilder().setCount(res.value()).build());
+            responseObserver.onCompleted();
+        }
     }
 
     @Override
     public void getDownVotes(GetPostArgs request, StreamObserver<VoteCountResult> responseObserver) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDownVotes'");
+        Result<Integer> res = impl.getDownVotes(request.getPostId());
+        if( ! res.isOK() )
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else {
+            responseObserver.onNext(VoteCountResult.newBuilder().setCount(res.value()).build());
+            responseObserver.onCompleted();
+        }
+
     }
 
     protected static Throwable errorCodeToStatus( Result.ErrorCode error ) {
