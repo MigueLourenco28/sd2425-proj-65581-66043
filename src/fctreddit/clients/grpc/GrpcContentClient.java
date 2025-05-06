@@ -1,8 +1,12 @@
 package fctreddit.clients.grpc;
 
+import java.io.FileInputStream;
 import java.net.URI;
+import java.security.KeyStore;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.TrustManagerFactory;
 
 import io.grpc.Channel;
 import io.grpc.LoadBalancerRegistry;
@@ -10,6 +14,10 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.internal.PickFirstLoadBalancerProvider;
+import io.grpc.netty.GrpcSslContexts;
+import io.grpc.netty.NettyChannelBuilder;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
 import fctreddit.api.Post;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
@@ -21,6 +29,7 @@ import fctreddit.impl.grpc.generated_java.ContentProtoBuf.GetPostAnswersArgs;
 import fctreddit.impl.grpc.generated_java.ContentProtoBuf.GetPostArgs;
 import fctreddit.impl.grpc.generated_java.ContentProtoBuf.GetPostsResult;
 import fctreddit.impl.grpc.generated_java.ContentProtoBuf.GrpcPost;
+import fctreddit.impl.grpc.generated_java.UsersGrpc;
 import fctreddit.impl.grpc.generated_java.UsersProtoBuf.GetUserArgs;
 import fctreddit.impl.grpc.generated_java.UsersProtoBuf.GetUserResult;
 import fctreddit.impl.grpc.util.PostDataModelAdaptor;
@@ -34,9 +43,31 @@ public class GrpcContentClient extends ContentClient {
 	
 	final ContentGrpc.ContentBlockingStub stub;
 
-	public GrpcContentClient(URI serverURI) {
-		Channel channel = ManagedChannelBuilder.forAddress(serverURI.getHost(), serverURI.getPort()).usePlaintext().build();
-		stub = ContentGrpc.newBlockingStub( channel ).withDeadlineAfter(READ_TIMEOUT, TimeUnit.MILLISECONDS);
+	public GrpcContentClient(URI serverURI) throws Exception {
+		String trustStoreFilename = System.getProperty("javax.net.ssl.trustStore");
+		String trustStorePassword = System.getProperty("javax.net.ssl.trustStorePassword");
+		
+		
+		KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		try(FileInputStream input = new FileInputStream(trustStoreFilename)) {
+			trustStore.load(input, trustStorePassword.toCharArray());
+		}
+		
+		TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
+				TrustManagerFactory.getDefaultAlgorithm());
+		trustManagerFactory.init(trustStore);
+		
+		SslContext context = GrpcSslContexts
+				.configure(
+						SslContextBuilder.forClient().trustManager(trustManagerFactory)
+						).build();
+		
+		Channel channel = NettyChannelBuilder
+				.forAddress(serverURI.getHost(), serverURI.getPort())
+				.sslContext(context)
+				.enableRetry()
+				.build();		
+		stub = ContentGrpc.newBlockingStub( channel );
 	}
 
     @Override

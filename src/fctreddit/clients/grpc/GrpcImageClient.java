@@ -1,10 +1,14 @@
 package fctreddit.clients.grpc;
 
+import java.io.FileInputStream;
 import java.net.URI;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.TrustManagerFactory;
 
 import com.google.protobuf.ByteString;
 
@@ -14,6 +18,10 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.internal.PickFirstLoadBalancerProvider;
+import io.grpc.netty.GrpcSslContexts;
+import io.grpc.netty.NettyChannelBuilder;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
 import fctreddit.api.User;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
@@ -43,9 +51,31 @@ public class GrpcImageClient extends ImageClient {
 	
 	final ImageGrpc.ImageBlockingStub stub;
 
-	public GrpcImageClient(URI serverURI) {
-		Channel channel = ManagedChannelBuilder.forAddress(serverURI.getHost(), serverURI.getPort()).usePlaintext().build();
-		stub = ImageGrpc.newBlockingStub( channel ).withDeadlineAfter(READ_TIMEOUT, TimeUnit.MILLISECONDS);
+	public GrpcImageClient(URI serverURI) throws Exception {
+		String trustStoreFilename = System.getProperty("javax.net.ssl.trustStore");
+		String trustStorePassword = System.getProperty("javax.net.ssl.trustStorePassword");
+		
+		
+		KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		try(FileInputStream input = new FileInputStream(trustStoreFilename)) {
+			trustStore.load(input, trustStorePassword.toCharArray());
+		}
+		
+		TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
+				TrustManagerFactory.getDefaultAlgorithm());
+		trustManagerFactory.init(trustStore);
+		
+		SslContext context = GrpcSslContexts
+				.configure(
+						SslContextBuilder.forClient().trustManager(trustManagerFactory)
+						).build();
+		
+		Channel channel = NettyChannelBuilder
+				.forAddress(serverURI.getHost(), serverURI.getPort())
+				.sslContext(context)
+				.enableRetry()
+				.build();		
+		stub = ImageGrpc.newBlockingStub( channel );
 	}
 
 	@Override

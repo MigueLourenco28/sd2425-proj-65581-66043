@@ -4,6 +4,8 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.util.logging.Logger;
 
+import javax.net.ssl.SSLContext;
+
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -21,7 +23,7 @@ public class ImageServer {
 	
 	public static final int PORT = 8081;
 	public static final String SERVICE = "Image";
-	private static final String SERVER_URI_FMT = "http://%s:%s/rest";
+	private static final String SERVER_URI_FMT = "https://%s:%s/rest";
 	
 	public static void main(String[] args) {
 		try {
@@ -31,7 +33,8 @@ public class ImageServer {
 
 			String ip = InetAddress.getLocalHost().getHostAddress();
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
-			JdkHttpServerFactory.createHttpServer( URI.create(serverURI), config);
+			JdkHttpServerFactory.createHttpServer( URI.create(serverURI), config,
+				SSLContext.getDefault());
 	
 			Discovery discovery = new Discovery(Discovery.DISCOVERY_ADDR,SERVICE, serverURI);
 			discovery.start();
