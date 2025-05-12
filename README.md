@@ -50,4 +50,11 @@
   - [ ]Remover imagens quando o conteúdo for apagado.
 
 # TP2
+## Objetivo Principal: 
 
+Tornar o o sistema mais seguro:
+
+- [ ] Usar TLS nos servidores e clientes (certificar que estamos a falar com o servidor correto em segurança);
+- [ ] Criar novo Image Service remoto (Imgur);
+- [ ] Aguentar problemas de integridade entre coteúdo guardado no Image Service e referenciado no Content Service;
+- [ ] Certificar que o Content Service é à prova de falhas (suport up to 1 crash failure).
