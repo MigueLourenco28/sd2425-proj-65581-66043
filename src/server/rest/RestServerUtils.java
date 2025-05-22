@@ -10,20 +10,22 @@ import server.ServerUtils;
 import java.net.URI;
 import java.net.UnknownHostException;
 
+import javax.net.ssl.SSLContext;
+
 import static jakarta.ws.rs.core.Response.Status.*;
 
 public class RestServerUtils {
 
-    public static final String COMM_PROTOCOL = "http";
+    public static final String COMM_PROTOCOL = "https";
 
     static String computeServerUri(int port) throws UnknownHostException {
         return ServerUtils.computeServerUri(COMM_PROTOCOL, port, ServerUtils.CommInterface.REST);
     }
 
-    static <T> void launchResource(String uri, Class<T> resourceClass) {
+    static <T> void launchResource(String uri, Class<T> resourceClass) throws Exception {
         ResourceConfig config = new ResourceConfig();
         config.register(resourceClass);
-        JdkHttpServerFactory.createHttpServer( URI.create(uri), config);
+        JdkHttpServerFactory.createHttpServer( URI.create(uri), config, SSLContext.getDefault());
     }
 
     static <T> T wrapResult(Result<T> res) {
