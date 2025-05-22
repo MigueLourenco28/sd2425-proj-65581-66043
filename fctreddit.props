@@ -21,21 +21,13 @@ DISCOVERY_MULTICAST_PORT=2262
 
 CLIENT_TRUSTSTORE=truststore.ks,changeit
 USERS_KEYSTORES=users-1,users-server.ks,password
-IMAGE_KEYSTORES=<keystores do serviço image>; formato: image-1,filename1,password1 image-2,filename2,password2
+IMAGE_KEYSTORES=image-1,images-server.ks,password image-2,filename2,password2
 CONTENT_KEYSTORES=<keystores do serviço content>; formato: content-1,filename1,password1 content-2,filename2,password2 content-3,filename3,password3
 
 IMAGE_PROXY_MAINCLASS=<classe main do Proxy>
 IMAGE_PROXY_EXTRA_ARGS=<eventais parâmetros adicionais a passar ao Proxy>
 IMAGE_PROXY_PORT=<porto do servidor Proxy>
 IMAGE_PROXY_PROTO=<tipo do servidor Proxy>; valores esperados: rest ou grpc
-
-USERS_REST_EXTRA_ARGS=<eventais parâmetros adicionais a passar ao servidor Users REST>
-IMAGE_REST_EXTRA_ARGS=<eventais parâmetros adicionais a passar ao servidor Image REST>
-CONTENT_REST_EXTRA_ARGS=<eventais parâmetros adicionais a passar ao servidor Content REST>
-
-USERS_GRPC_EXTRA_ARGS=<eventais parâmetros adicionais a passar ao servidor Users GRPC>
-IMAGE_GRPC_EXTRA_ARGS=<eventais parâmetros adicionais a passar ao servidor Image GRPC>
-CONTENT_GRPC_EXTRA_ARGS=<eventais parâmetros adicionais a passar ao servidor Content GRPC>
 
 CONTENT_REP_SERVER_MAINCLASS=<classe main do servidor Content replicado>,
 CONTENT_REP_PORT=<porto do servidor Content replicado>,
