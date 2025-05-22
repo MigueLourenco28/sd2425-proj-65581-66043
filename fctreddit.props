@@ -20,7 +20,7 @@ DISCOVERY_MULTICAST_IP=226.226.226.226
 DISCOVERY_MULTICAST_PORT=2262
 
 CLIENT_TRUSTSTORE=truststore.ks,changeit
-USERS_KEYSTORES=<keystores do serviço users>; formato: users-1,filename,password
+USERS_KEYSTORES=users-1,users-server.ks,password
 IMAGE_KEYSTORES=<keystores do serviço image>; formato: image-1,filename1,password1 image-2,filename2,password2
 CONTENT_KEYSTORES=<keystores do serviço content>; formato: content-1,filename1,password1 content-2,filename2,password2 content-3,filename3,password3
 
